@@ -5,23 +5,33 @@ unsigned long previousMillis = 0;        // will store last time ADC queried
 int ADCpin = A0;
 byte flag =0;
 
-const byte numStamps = 5; //n
-const byte averagePeriod = 5; //t
+const byte numStamps = 6; //n
+const byte averagePeriod = 10; //t
 
 // constants won't change:
-const int sampleRate = 120;
-const int slowestPulse = 3;
+const byte sampleRate = 120;
+const byte scaledSampleRate = 30;
+const byte slowestPulse = 6;
+byte decimCtr = 0;
+
+const byte scaleFac = sampleRate/scaledSampleRate;
+
 const long interval = (1/(float)sampleRate) *1000;           // interval at which to blink (milliseconds)
-const int windowSize=sampleRate*slowestPulse;
+const int windowSize=scaledSampleRate*slowestPulse;
+
+
 
 const byte dispInterval = 1000;           // interval at which to blink (milliseconds)
 unsigned long dispMillis = 0;        
 
 
-float sampleWindow[windowSize]={0};
+float sampleWindow[windowSize] = {0};
+
+float decimWindow[scaleFac] = {0};
+
 float RR=0;
 float SMA=0;
-time_t stamps[numStamps];
+int stamps[numStamps];
 
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -32,7 +42,28 @@ void setup() {
   lcd.begin(16, 2);
 }
 
-float calcSMA()
+void fillDecim(float val)
+{
+    for (int i=0;i<scaleFac-1;i++)
+    {
+      decimWindow[i]=decimWindow[i+1];
+    }
+    decimWindow[scaleFac-1] = val;
+  
+}
+
+float decimate()
+{
+  float temp=0;
+  for (int i=0;i<scaleFac;i++)
+    {
+      temp+=decimWindow[i];
+    }
+    return temp/scaleFac;
+}
+
+
+void calcSMA()
 {
   float temp=0;
   for (int i=0;i<windowSize;i++)
@@ -61,7 +92,7 @@ void detect(float val)
     {
       stamps[i]=stamps[i+1];
     }
-    stamps[numStamps-1] = now();
+    stamps[numStamps-1] = millis();
   }
   
   if(val<SMA && flag==1)
@@ -72,18 +103,19 @@ void detect(float val)
 }
 void updateRR()
 {
-  time_t cur = now();
 
-  int count=0;
+  int avg=0;
 
-  for(int i=0; i<numStamps;i++)
+  for(int i=0; i<numStamps-1;i++)
   {
-    if( (cur-stamps[i])<averagePeriod )
-    {
-      count++;
-    }
+    avg += stamps[i+1]-stamps[i];
+
   }
-  RR=(count/((float)averagePeriod))*(60); //convert to BPM
+  avg/=(numStamps-1);// in millisec
+
+  float freq=avg/((float)1000);
+  Serial.println(1/freq);
+  RR=(60)/freq; //convert to BPM
   
 }
 
@@ -91,19 +123,23 @@ void loop() {
   unsigned long currentMillis = millis();
   float t = currentMillis/((float)1000);
    if (currentMillis - previousMillis >= interval) {
+    decimCtr++;
     previousMillis = currentMillis;
     //int sensorValue = analogRead(A0);
-    float freq = 2*M_PI*1;
+    float freq = 2*M_PI*0.2;
     float voltage = 3.2 +  0.2*sin (freq*t);
 
-    
-    appendWindow(voltage);
-    calcSMA();
-    detect(voltage);
-    updateRR();
-
-
+    fillDecim(voltage);
   }
+  
+  if(decimCtr==scaleFac){
+    appendWindow(decimate());
+    calcSMA();
+    detect(decimate());
+    updateRR();
+    decimCtr=0;
+  }
+  
    if (currentMillis - dispMillis >= dispInterval) {
     dispMillis = currentMillis;
     lcd.setCursor(0, 0);
