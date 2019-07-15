@@ -1,4 +1,5 @@
 #include <TimeLib.h>
+#include <math.h>
 #include <LiquidCrystal.h>
 unsigned long previousMillis = 0;        // will store last time ADC queried
 int ADCpin = A0;
@@ -82,22 +83,26 @@ void updateRR()
       count++;
     }
   }
-  RR=(count/averagePeriod)*(60/numStamps); //convert to BPM
+  RR=(count/((float)averagePeriod))*(60); //convert to BPM
   
 }
 
 void loop() {
   unsigned long currentMillis = millis();
+  float t = currentMillis/((float)1000);
    if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    int sensorValue = analogRead(A0);
-    float voltage = sensorValue * (5.0 / 1023.0);
+    //int sensorValue = analogRead(A0);
+    float freq = 2*M_PI*1;
+    float voltage = 3.2 +  0.2*sin (freq*t);
 
+    
     appendWindow(voltage);
     calcSMA();
     detect(voltage);
     updateRR();
-    Serial.println(SMA);
+
+
   }
    if (currentMillis - dispMillis >= dispInterval) {
     dispMillis = currentMillis;
