@@ -116,7 +116,7 @@ void loop() {
    if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     //int sensorValue = analogRead(A0);
-    float freq = 2*M_PI*0.2;
+    float freq = 2*M_PI*0.25;
     float voltage = 3.2 +  0.2*sin (freq*t);
 
     fillFilt(voltage);
