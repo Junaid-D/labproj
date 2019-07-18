@@ -10,6 +10,7 @@ s.InputBufferSize = 50; % read only one byte every time
 s.Terminator = 'CR/LF'
 s.BaudRate = 9600
 s
+flushinput(s);
 global isClicked;
 isClicked = false;
 
@@ -52,24 +53,28 @@ buds={};
 while (1)
     i = i + 1;
     %% Read buffer data
+      
+        asd = 0;
         
-           asd = fscanf(s);
+       
+        
+           asd = fscanf(s)
            
-           p =  sscanf(asd,'%f %f %lu %f');
+           p =  sscanf(asd,'%f %f %f %f');
         
            buds{end+1}=asd;
            %asd = str2num(asd);
-        
-           for j = 1:datasets
-                if length(p) ==datasets
-                    data(j,i) = p(j);
-                elseif i>1
-                   data(j,i) = data(j,i-1);
-                else
-                    data(j,i)=0;
-                end
-           end
-        
+        if (
+       for j = 1:datasets
+        if length(asd)==1
+            data(j,i) = asd;
+        elseif i>1
+           data(j,i) = data(j,i-1);
+        else
+            data(j,i)=0;
+        end
+
+    end
     
     %% Read time stamp
     % If reading faster than sampling rate, force sampling time.
@@ -85,13 +90,13 @@ while (1)
     t(i) = toc;
     %% Plot live data
     if i > 1
-        line([t(i-1) t(i)],[data(1,i-1) data(1,i)],'Color','red')
-        line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','blue')
+        line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','red')
+        line([t(i-1) t(i)],[data(3,i-1) data(3,i)],'Color','blue')
         
        
-        if (data(3,i-1)<data(3,i))
+        if (data(1,i-1)<data(1,i))
             
-            line([t(i) t(i)],[data(2,i) data(2,i)],'Color','magenta','Marker','*')
+            line([t(i) t(i)],[data(3,i) data(3,i)],'Color','magenta','Marker','*')
         end
         
         drawnow

@@ -41,7 +41,7 @@ const int gradScaleFac = 1000;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   lcd.begin(16, 2);
 }
 
@@ -165,7 +165,7 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.1;
+    float freq = 2*M_PI*0.25;
     float voltage = 3.2 +  0.2*sin (freq*t);// comment for not using adc
 
     //int sensorValue = analogRead(A0);
@@ -176,14 +176,19 @@ void loop() {
     {
       float x = getFiltOut();
       //Serial.println(Grad);
-      Serial.println(voltage);
-      Serial.println(x/(float)gradScaleFac);
+
       appendWindow(x);
       calcGrad();
       detect();
       updateRR();
-      Serial.println(stamps[numStamps - 1]);
-      Serial.println(RR);
+
+     Serial.print(voltage);
+     Serial.print(" ");     
+     Serial.print(x/gradScaleFac);
+     Serial.print(" ");     
+     Serial.print(stamps[numStamps - 1]);
+     Serial.print(" ");
+     Serial.println(RR);
 
 
     }
