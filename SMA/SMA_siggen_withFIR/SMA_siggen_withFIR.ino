@@ -27,7 +27,16 @@ unsigned long dispMillis = 0;
 
 float sampleWindow[windowSize] = {0};
 
-float decimWindow[scaleFac] = {0};
+
+
+const byte numTaps = 21;
+//matlab fir1
+float taps[numTaps] = {0.00253628299721552,0.00255348555988337,-1.62924192224179e-18,-0.00863465184119861,-0.0210222026271213,-0.0242112092355797,6.62120565941780e-18,0.0605565098224690,0.144591562515657,0.219130722316847,0.248999000983656,0.219130722316847,0.144591562515657,0.0605565098224690,6.62120565941780e-18,-0.0242112092355797,-0.0210222026271213,-0.00863465184119861,-1.62924192224179e-18,0.00255348555988337,0.00253628299721552};
+
+byte filterReady = 0;
+float decimWindow[numTaps] = {0};
+
+
 
 float RR=0;
 float SMA=0;
@@ -44,22 +53,22 @@ void setup() {
 
 void fillDecim(float val)
 {
-    for (int i=0;i<scaleFac-1;i++)
+    for (int i=0;i<numTaps-1;i++)
     {
       decimWindow[i]=decimWindow[i+1];
     }
-    decimWindow[scaleFac-1] = val;
+    decimWindow[numTaps-1] = val;
   
 }
 
 float decimate()
 {
   float temp=0;
-  for (int i=0;i<scaleFac;i++)
+  for (int i=0;i<numTaps;i++)
     {
-      temp+=decimWindow[i];
+      temp+=decimWindow[i]*taps[i];
     }
-    return temp/scaleFac;
+    return temp;
 }
 
 
@@ -132,13 +141,15 @@ void loop() {
     
     float voltage = sensorValue * (5.0 / 1023.0);
 
-    Serial.println(voltage);
 
     fillDecim(voltage);
   }
   
   if(decimCtr==scaleFac){
-    appendWindow(decimate());
+    float val = decimate ();
+    Serial.println(val);
+
+    appendWindow(val);
     calcSMA();
     detect(decimate());
     updateRR();

@@ -2,10 +2,12 @@ clc;
 clear all;
 samprate=120;
 nyq=samprate/2;
-stop = 0.1/nyq;
+stop = 15/nyq;
 
-b = fir1(1997,0.0001);
+b = fir1(20,stop);
 figure()
+
+boxcar = ones(1,30)/30;
 freqz(b,1,512,120)
 
 rate=0.1;%Hz
@@ -20,7 +22,7 @@ t=linspace(0,duration,sampleRate*duration);
 
 
 sig=breathFunc(t);
-sig= awgn(sig,40,'measured');
+sig= awgn(sig,10,'measured');
 
 flag=0;
 

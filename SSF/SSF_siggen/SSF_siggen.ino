@@ -9,7 +9,7 @@ const byte averagePeriod = 5; //t
 
 // constants won't change:
 const int sampleRate = 120;
-const float slowRate = 0.2;
+const float slowRate = 0.1;
 const long interval = (1/(float)sampleRate) *1000;           // interval at which to blink (milliseconds)
 
 
@@ -22,7 +22,7 @@ float sampleWindow[windowSize]={0}; // holds SSF signal
 const byte dispInterval = 1000;           // interval at which to blink (milliseconds)
 unsigned long dispMillis = 0;        
 
-const int SSFSize = (sampleRate/slowRate)/2;
+const int SSFSize = (sampleRate/slowRate)/8;
 float SSFWindow[SSFSize] ={0} ;
 
 byte SSFfull = 0;
@@ -142,13 +142,14 @@ void loop() {
    if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
-    //int sensorValue = analogRead(A0);
+    int sensorValue = analogRead(A0);
     
     float freq = 2*M_PI*0.1;
-    float voltage = 3.2 +  0.2*sin (freq*t);
-    
-    appendSSFWindow(voltage);
+    //float voltage = 3.2 +  0.2*sin (freq*t);
+    float voltage = sensorValue * (5.0 / 1023.0);
 
+    appendSSFWindow(voltage);
+ 
     if(SSFfull == 1)
     {
       appendWindow(getSSFVal());
