@@ -1,11 +1,18 @@
+
+
 % Copyright 2014 The MathWorks, Inc.
 %%%https://www.mathworks.com/matlabcentral/fileexchange/46775-arduino-serial-data-acquisition
 %% Create serial object for Arduino
 s = serial('COM7'); % change the COM Port number as needed
 %% Connect the serial port to Arduino
-s.InputBufferSize = 20; % read only one byte every time
+s.InputBufferSize = 50; % read only one byte every time
 s.Terminator = 'LF'
 s
+
+global isClicked;
+isClicked = false;
+
+
 try
     fopen(s);
 catch err
@@ -18,13 +25,18 @@ figure,
 grid on,
 xlabel ('Time (s)'), ylabel('Data '),
 axis([0 Tmax+1 -10 300]),
+
+ButtonHandle = uicontrol('Style', 'PushButton', ...
+                         'String', 'Stop loop', ...
+                          'Callback', @(x,v) click(x,v) );
 %% Read and plot the data from Arduino
 
-datasets=2;
+datasets=3;
 dctr=0;
 
-data = [datasets,1];
 
+data = [datasets,1];
+detect = false;
 Fs=125;
 
 Ts = 1/Fs; % Sampling time (s)
@@ -34,16 +46,20 @@ t = 0;
 tic % Start timer
 
 
+buds={};
 
-
-while toc<Tmax
+while (1)
     i = i + 1;
     %% Read buffer data
       
     for j = 1:datasets
         
         if(s.BytesAvailable>1)
-            asd=fscanf(s,'%d');
+            asd = 0;
+            str = fgetl(s);
+            buds{end+1}=str;
+
+            asd = str2num(str);
         end
         if length(asd)==1
             data(j,i) = asd;
@@ -69,10 +85,30 @@ while toc<Tmax
     t(i) = toc;
     %% Plot live data
     if i > 1
-        line([t(i-1) t(i)],[data(1,i-1) data(1,i)],'Color','red')
-        line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','blue')
+        line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','red')
+        line([t(i-1) t(i)],[data(3,i-1) data(3,i)],'Color','blue')
+        
+       
+        if (data(1,i-1)<data(1,i))
+            
+            line([t(i) t(i)],[data(3,i) data(3,i)],'Color','magenta','Marker','*')
+        end
+        
         drawnow
+        axis auto
     end
+    
+  if isClicked
+    disp('Loop stopped by user');
+    break;
+  end
+    
 end
-axis 'auto y'
 fclose(s);
+
+
+function [] = click(PushButton, EventData)
+    global isClicked;
+   isClicked =true;
+end
+

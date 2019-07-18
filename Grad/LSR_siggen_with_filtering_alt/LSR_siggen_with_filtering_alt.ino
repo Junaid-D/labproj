@@ -167,22 +167,27 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.5;
+    float freq = 2*M_PI;
     float voltage = 3.2 +  0.1*sin (freq*t);// comment for not using adc
     int sensorValue = voltage*(1023.0/5);//
     
     //int sensorValue = analogRead(A0);
    // float voltage = sensorValue * convVal;
     //Serial.print(voltage,5);
-    Serial.println(b++);
-    Serial.println(b/2);
+
 
     fillFilt(sensorValue);
     if (filterReady == 1)
     {
-      appendWindow(getFiltOut());
+      int v1 = getFiltOut();
+      appendWindow(v1);
+      Serial.println(voltage);
+      float temp = v1 * convVal;
+      Serial.println(temp);
       calcGrad();
       detect();
+      Serial.println(stamps[numStamps - 1]);
+
       updateRR();
     }
   }
