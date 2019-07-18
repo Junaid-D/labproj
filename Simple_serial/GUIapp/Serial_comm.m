@@ -1,4 +1,4 @@
-
+function x = initialize ()
 
 % Copyright 2014 The MathWorks, Inc.
 %%%https://www.mathworks.com/matlabcentral/fileexchange/46775-arduino-serial-data-acquisition
@@ -8,17 +8,11 @@ s = serial('COM7'); % change the COM Port number as needed
 s.InputBufferSize = 50; % read only one byte every time
 s.Terminator = 'LF'
 s
-
-global isClicked;
-isClicked = false;
-
-
-try
-    fopen(s);
-catch err
-    fclose(instrfind);
-    error('Make sure you select the correct COM Port where the Arduino is connected.');
+ return s
 end
+
+
+
 %% Create a figure window to monitor the live data
 Tmax = 10; % Total time for data collection (s)
 figure,
@@ -58,11 +52,10 @@ while (1)
             asd = 0;
             str = fgetl(s);
             buds{end+1}=str;
-           
+
             asd = str2num(str);
-            end
-            
         end
+        
         if length(asd)==1
             data(j,i) = asd;
         elseif i>1
@@ -87,17 +80,17 @@ while (1)
     t(i) = toc;
     %% Plot live data
     if i > 1
-        %line([t(i-1) t(i)],[data(1,i-1) data(1,i)],'Color','red')
-       % line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','blue')
+        line([t(i-1) t(i)],[data(2,i-1) data(2,i)],'Color','red')
+        line([t(i-1) t(i)],[data(3,i-1) data(3,i)],'Color','blue')
         
-        if(detect)
-            line([t(i-1) t(i)],[data(3,i-1) data(3,i)],'Color','orange','Marker','*')
+       
+        if (data(1,i-1)<data(1,i))
+            
+            line([t(i) t(i)],[data(3,i) data(3,i)],'Color','magenta','Marker','*')
         end
-
-        detect = false;
+        
         drawnow
         axis auto
-        
     end
     
   if isClicked

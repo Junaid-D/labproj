@@ -13,7 +13,7 @@ const float slowRate = 0.1;
 const long interval = (1 / (float)sampleRate) * 1000;        // interval at which to blink (milliseconds)
 
 
-const float thresholdGrad = 0.0001;
+const float thresholdGrad = 0.2;
 
 
 const int windowSize = (sampleRate / slowRate) / 32;
@@ -34,6 +34,7 @@ float filterCoeffs[numTaps] = {0.00490978693901733, 0.00552744069659965, 0.00735
 byte filterReady = 0;
 float filterWindow [numTaps] = {0};
 
+const int gradScaleFac = 1000;
 
   const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
   LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -164,20 +165,27 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.2;
-    //float voltage = 3.2 +  0.2*sin (freq*t);// comment for not using adc
+    float freq = 2*M_PI*0.1;
+    float voltage = 3.2 +  0.2*sin (freq*t);// comment for not using adc
 
-    int sensorValue = analogRead(A0);
-    float voltage = sensorValue * (5.0 / 1023.0);
-    Serial.println(voltage);
+    //int sensorValue = analogRead(A0);
+    //float voltage = sensorValue * (5.0 / 1023.0);
 
-    fillFilt(voltage);
+    fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)
     {
-      appendWindow(getFiltOut());
+      float x = getFiltOut();
+      //Serial.println(Grad);
+      Serial.println(voltage);
+      Serial.println(x/(float)gradScaleFac);
+      appendWindow(x);
       calcGrad();
       detect();
       updateRR();
+      Serial.println(stamps[numStamps - 1]);
+      Serial.println(RR);
+
+
     }
   }
   if (currentMillis - dispMillis >= dispInterval) {

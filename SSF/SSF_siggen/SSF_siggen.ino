@@ -32,6 +32,8 @@ float RR=0;
 float Grad = 0;
 unsigned long stamps[numStamps];
 
+int gradScaleFac = 10;
+
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
@@ -81,6 +83,7 @@ void calcGrad()
   }
 
   Grad = (windowSize*xy - x*y)/(windowSize*xx-x*x);
+//  Grad *= gradScaleFac;
 
 }
 
@@ -119,8 +122,8 @@ void detect()
 
 void updateRR()
 {
-  int avg = 0;
-  int count = 0;
+  unsigned long avg = 0;
+  byte count = 0;
   for(int i=0; i<numStamps-1;i++)
   {
     if(stamps[i]>0)
@@ -142,13 +145,15 @@ void loop() {
    if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
 
-    int sensorValue = analogRead(A0);
-    
-    float freq = 2*M_PI*0.1;
-    //float voltage = 3.2 +  0.2*sin (freq*t);
-    float voltage = sensorValue * (5.0 / 1023.0);
+    //int sensorValue = analogRead(A0);
+    //float voltage = sensorValue * (5.0 / 1023.0);
 
-    appendSSFWindow(voltage);
+
+    float freq = 2*M_PI*0.2;
+    float voltage = 3.2 +  0.1*(sin (freq*t) +sin(0.5*freq*t));
+    int sensorValue = voltage *(1023.0/5);
+
+    appendSSFWindow(voltage*gradScaleFac);
  
     if(SSFfull == 1)
     {
