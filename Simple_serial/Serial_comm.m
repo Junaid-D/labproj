@@ -6,9 +6,9 @@ clc;
 %% Create serial object for Arduino
 s = serial('COM7'); % change the COM Port number as needed
 %% Connect the serial port to Arduino
-s.InputBufferSize = 50; % read only one byte every time
+s.InputBufferSize = 1024; % read only one byte every time
 s.Terminator = 'CR/LF'
-s.BaudRate = 9600
+s.BaudRate = 115200
 s
 global isClicked;
 isClicked = false;
@@ -32,7 +32,7 @@ ButtonHandle = uicontrol('Style', 'PushButton', ...
                           'Callback', @(x,v) click(x,v) );
 %% Read and plot the data from Arduino
 
-datasets=4;
+datasets=5;
 dctr=0;
 
 
@@ -55,7 +55,7 @@ while (1)
         
            asd = fscanf(s);
            
-           p =  sscanf(asd,'%f %f %lu %f');
+           p =  sscanf(asd,'%f %f %lu %f %lu');
         
            buds{end+1}=asd;
            %asd = str2num(asd);
@@ -75,14 +75,8 @@ while (1)
     % If reading faster than sampling rate, force sampling time.
     % If reading slower than sampling rate, nothing can be done. Consider
     % decreasing the set sampling time Ts
-    t(i) = toc;
-    if i > 1
-        T = toc - t(i-1);
-        while T < Ts
-            T = toc - t(i-1);
-        end
-    end
-    t(i) = toc;
+  
+    t(i) = data(end,end)/1000;
     %% Plot live data
     if i > 1
         line([t(i-1) t(i)],[data(1,i-1) data(1,i)],'Color','red')
