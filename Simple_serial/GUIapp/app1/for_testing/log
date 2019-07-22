@@ -1,0 +1,19 @@
+
+   Serial Port Object : Serial-COM7
+
+   Communication Settings 
+      Port:               COM7
+      BaudRate:           9600
+      Terminator:         'CR/LF'
+
+   Communication State 
+      Status:             closed
+      RecordStatus:       off
+
+   Read/Write State  
+      TransferStatus:     idle
+      BytesAvailable:     0
+      ValuesReceived:     0
+      ValuesSent:         0
+ 
+

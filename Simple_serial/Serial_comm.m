@@ -49,6 +49,7 @@ tic % Start timer
 %clean = fscanf(s);
 buds={};
 
+tic;
 while (1)
     i = i + 1;
     %% Read buffer data
@@ -77,6 +78,14 @@ while (1)
     % decreasing the set sampling time Ts
   
     t(i) = data(end,end)/1000;
+    
+    t_0 = toc;
+    t_1 = t_0;
+    while((t_1-t_0)<Ts)
+        t_1=toc;
+    end
+    
+    
     %% Plot live data
     if i > 1
         line([t(i-1) t(i)],[data(1,i-1) data(1,i)],'Color','red')

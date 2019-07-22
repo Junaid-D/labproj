@@ -1,5 +1,8 @@
+#include <QuickSortLib.h>
 #include <TimeLib.h>
 #include <LiquidCrystal.h>
+
+
 unsigned long previousMillis = 0;        // will store last time ADC queried
 int ADCpin = A0;
 byte flag = 0;
@@ -29,6 +32,7 @@ float sampleWindow[windowSize] = {0};
 float RR = 0;
 float Grad = 0;
 unsigned long stamps[numStamps];
+float grads[windowSize-1] = {0};
 
 
 const byte numTaps = 31;
@@ -82,23 +86,34 @@ float appendWindow(float val)
 
 }
 
+void bSort(float* arr,int size)
+{
+  for(int i=0; i <size-1; i++)
+  {
+    for(int j  = 0; j<(size-i-1); j++)
+    {
+      if(arr[j] > arr[j+1])
+      {
+        float temp = arr[j];
+        arr[j] = arr[j+1];
+        arr[j+1] = temp;
+      }
+      
+    } 
+  }
+  
+}
 
 void calcGrad()
 {
-  float xx = 0;
-  float xy = 0;
-  float x = 0;
-  float y = 0;
-
-  for (int i = 0; i < windowSize; i++)
+  for (int i = 0; i < windowSize-1; i++)
   {
-    x += i;
-    y += sampleWindow[i];
-    xx += i * i;
-    xy += sampleWindow[i] * i;
+    grads[i] = sampleWindow[i+1]-sampleWindow[i];
+  //  Serial.println(grads[i]);
   }
+  bSort(grads,windowSize-1);
 
-  Grad = (windowSize * xy - x * y) / (windowSize * xx - x * x);
+  Grad = grads[(windowSize-1)/2];
   //Serial.println(Grad,5);
 
 }
@@ -187,19 +202,19 @@ void loop() {
       updateRR();
     
       sendCtr++;
-  if(sendCtr==sendCount)
-  {
-     Serial.print(voltage);
-     Serial.print(" ");     
-     Serial.print(x/gradScaleFac);
-     Serial.print(" ");     
-     Serial.print(stamps[numStamps - 1]);
-     Serial.print(" ");
-     Serial.print(RR);
-     Serial.print(" ");
-     Serial.println(currentMillis);
-     sendCtr = 0;
-  }
+    if(sendCtr==sendCount)
+    {
+       Serial.print(voltage);
+       Serial.print(" ");     
+       Serial.print(x/gradScaleFac);
+       Serial.print(" ");     
+       Serial.print(stamps[numStamps - 1]);
+       Serial.print(" ");
+       Serial.print(RR);
+       Serial.print(" ");
+       Serial.println(currentMillis);
+       sendCtr = 0;
+    }
 
     }
   }
