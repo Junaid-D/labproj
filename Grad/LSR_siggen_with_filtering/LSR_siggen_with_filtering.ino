@@ -12,7 +12,7 @@ const int sampleRate = 120;
 const float slowRate = 0.1;
 const long interval = (1 / (float)sampleRate) * 1000;        // interval at which to blink (milliseconds)
 
-const byte sendCount = 5;
+const byte sendCount = 20;
 byte sendCtr = 0;
 
 
@@ -39,7 +39,7 @@ float filterWindow [numTaps] = {0};
 
 const int gradScaleFac = 1000;
 
-  const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+  const int rs = 10, en = 9, d4 = 5, d5 = 6, d6 = 7, d7 = 8;
   LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -168,12 +168,12 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.15;
+    float freq = 2*M_PI*0.5;
     float sinPart = .1*sin (freq*t);
-    float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+    //float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
     int sensorValue = analogRead(A0);
-    //float voltage = sensorValue * (5.0 / 1023.0);
+    float voltage = sensorValue * (5.0 / 1023.0);
 
     fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)

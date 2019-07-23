@@ -15,7 +15,7 @@ const int sampleRate = 120;
 const float slowRate = 0.1;
 const long interval = (1 / (float)sampleRate) * 1000;        // interval at which to blink (milliseconds)
 
-const byte sendCount = 5;
+const byte sendCount = 30;
 byte sendCtr = 0;
 
 
@@ -185,10 +185,10 @@ void loop() {
 
     float freq = 2*M_PI*0.15;
     float sinPart = .1*sin (freq*t);
-    float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+    //float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
     int sensorValue = analogRead(A0);
-    //float voltage = sensorValue * (5.0 / 1023.0);
+    float voltage = sensorValue * (5.0 / 1023.0);
 
     fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)
@@ -204,13 +204,13 @@ void loop() {
       sendCtr++;
     if(sendCtr==sendCount)
     {
-       Serial.print(voltage);
+       Serial.print(voltage,5);
        Serial.print(" ");     
-       Serial.print(x/gradScaleFac);
+       Serial.print(x/gradScaleFac,5);
        Serial.print(" ");     
        Serial.print(stamps[numStamps - 1]);
        Serial.print(" ");
-       Serial.print(RR);
+       Serial.print(RR,5);
        Serial.print(" ");
        Serial.println(currentMillis);
        sendCtr = 0;
