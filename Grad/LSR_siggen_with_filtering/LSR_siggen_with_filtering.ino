@@ -6,6 +6,7 @@ byte flag = 0;
 
 const byte numStamps = 5; //n
 const byte averagePeriod = 10; //t
+unsigned long timeout = 10000; //ms
 
 // constants won't change:
 const int sampleRate = 120;
@@ -169,6 +170,8 @@ void loop() {
     //int sensorValue = analogRead(A0);
 
     float freq = 2*M_PI*0.5;
+    if(currentMillis>10000)
+      freq=0;
     float sinPart = .1*sin (freq*t);
     float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
@@ -208,8 +211,16 @@ void loop() {
     lcd.print(RR, 5);
 
     lcd.setCursor(0, 1);
-    lcd.print(F("Grad:"));
-    lcd.print(Grad, 3);
+    if( (currentMillis - stamps[numStamps-1]) < timeout)
+    {
+      lcd.print(F("Grad:"));
+      lcd.print(Grad, 3);
+    }
+    else
+    {
+      lcd.print(F("No Breath"));
+    }
+    
     lcd.print(F("S:"));
     lcd.print(interval);
 

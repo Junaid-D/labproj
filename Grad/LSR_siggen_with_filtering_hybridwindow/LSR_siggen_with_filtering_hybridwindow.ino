@@ -169,9 +169,13 @@ void loop() {
     //int sensorValue = analogRead(A0);
 
     float freq = 2*M_PI*0.1;
+    if(currentMillis>10000)
+      freq = 0;
+
     float sinPart = .1*sin (freq*t);
     float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
+   
     int sensorValue = analogRead(A0);
     //float voltage = sensorValue * (5.0 / 1023.0);
 
@@ -208,8 +212,15 @@ void loop() {
     lcd.print(RR, 5);
 
     lcd.setCursor(0, 1);
-    lcd.print(F("Grad:"));
-    lcd.print(Grad, 3);
+    if(RR>0)
+    {
+      lcd.print(F("Grad:"));
+      lcd.print(Grad, 3);
+    }
+    else
+    {
+      lcd.print(F("No Breath"));
+    }
     lcd.print(F("S:"));
     lcd.print(interval);
 
