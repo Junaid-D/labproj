@@ -5,6 +5,8 @@ int ADCpin = A0;
 byte flag = 0;
 
 const byte numStamps = 5; //n
+
+float windowWeights[numStamps-1] = {0.05,0.1,0.4,0.45};
 const byte averagePeriod = 10; //t
 
 // constants won't change:
@@ -132,17 +134,14 @@ void updateRR()
 {
   unsigned long cur = millis();
   unsigned long avg = 0;
-  unsigned int count = 0;
+  float sum = 0;
   for (int i = 0; i < numStamps - 1; i++)
   {
-    //Serial.print(stamps[i]);
-    //Serial.print(" ");
-    //Serial.println(cur);
-
-    if (stamps[i] > 0 )//&& (cur-stamps[i])<averagePeriod*1000 )
+    
+    if (stamps[i] > 0 )
     {
-      avg += stamps[i + 1] - stamps[i];
-      count++;
+      sum += windowWeights[i];
+      avg += (stamps[i + 1] - stamps[i])*windowWeights[i];
     }
   }
   if(avg == 0)
@@ -151,9 +150,8 @@ void updateRR()
      return;  
   }
   
-  avg /= (count); // in millisec
 
-  float freq = avg / ((float)1000);
+  float freq = avg / (((float)1000) * sum );
   RR = (60) / freq; //convert to BPM
 
 }
@@ -168,7 +166,11 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.5;
+    float freq = 2*M_PI*0.1;
+
+    if( currentMillis>20000)
+    freq = 2*M_PI*0.2;
+    
     float sinPart = .1*sin (freq*t);
     float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 

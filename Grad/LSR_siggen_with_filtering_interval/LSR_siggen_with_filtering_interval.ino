@@ -4,8 +4,8 @@ unsigned long previousMillis = 0;        // will store last time ADC queried
 int ADCpin = A0;
 byte flag = 0;
 
-const byte numStamps = 5; //n
-const byte averagePeriod = 10; //t
+const byte numStamps = 10; //n
+unsigned long RRinterval = 10000; //t in ms
 
 // constants won't change:
 const int sampleRate = 120;
@@ -23,6 +23,8 @@ const int windowSize = (sampleRate / slowRate) / 32;
 
 const byte dispInterval = 1000;           // interval at which to blink (milliseconds)
 unsigned long dispMillis = 0;
+
+
 
 
 float sampleWindow[windowSize] = {0};
@@ -133,28 +135,23 @@ void updateRR()
   unsigned long cur = millis();
   unsigned long avg = 0;
   unsigned int count = 0;
-  for (int i = 0; i < numStamps - 1; i++)
+  for (int i = 0; i < numStamps; i++)
   {
-    //Serial.print(stamps[i]);
-    //Serial.print(" ");
-    //Serial.println(cur);
+    
 
-    if (stamps[i] > 0 )//&& (cur-stamps[i])<averagePeriod*1000 )
+    if (stamps[i] > 0 && ((cur-stamps[i])<RRinterval ) )
     {
-      avg += stamps[i + 1] - stamps[i];
       count++;
     }
   }
-  if(avg == 0)
+  if(count == 0)
   {
      RR = 0;
      return;  
   }
+ // Serial.println(count);
   
-  avg /= (count); // in millisec
-
-  float freq = avg / ((float)1000);
-  RR = (60) / freq; //convert to BPM
+  RR = (60000/RRinterval) * (count); //convert to BPM
 
 }
 
