@@ -2,7 +2,7 @@ clc;
 clear all;
 
 
-x = csvread('without_filt.csv');
+x = csvread('with_analogue_without_digital.csv');
 
 sig = x(:,1).';
 time = x(:,end).';
@@ -23,7 +23,7 @@ P1(2:end-1) = 2*P1(2:end-1);
 
 f = Fs*(0:(L/2))/L;
 figure();
-plot(f(2:end),P1(2:end)) 
+plot(f(1:end),P1(1:end)) 
 title('Single-Sided Amplitude Spectrum of X(t)')
 xlabel('f (Hz)')
 ylabel('|P1(f)|')
