@@ -4,7 +4,7 @@ clear all;
 
 x = csvread('with_analogue_without_digital.csv');
 
-sig = x(:,1).';
+sig = x(:,2).';
 time = x(:,end).';
 
 Ts=(time(2)-time(1))/1000;

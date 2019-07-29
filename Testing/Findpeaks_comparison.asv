@@ -1,0 +1,26 @@
+clc;
+clear all;
+
+folder = 'Full_test';
+list = dir(folder)
+x = csvread(strcat(folder,'/',list(3).name));
+
+
+sig = x(:,2).';
+time = x(:,end).';
+
+
+detsWStamps=x;
+
+[~,idu] = unique(detsWStamps(:,3))
+uniqueDetVals = detsWStamps(idu,:);
+
+[pk,lk] = findpeaks(sig);
+hold on;
+plot(time,sig);
+plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','*')
+plot(time(lk),pk,'o')
+
+hold off;
+
+absErr = abs(length(pk)-length(uniqueDetVals)
