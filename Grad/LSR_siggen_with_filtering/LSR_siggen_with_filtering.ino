@@ -118,7 +118,7 @@ void detect()
       stamps[i] = stamps[i + 1];
     }
     stamps[numStamps - 1] = millis();
-    tone(6,800,200);
+    //tone(6,800,200);
   }
 
   if (Grad > 0 && flag == 1)
@@ -170,12 +170,14 @@ void loop() {
     int sensorValue = analogRead(A0);
 
 
-    float freq = 2*M_PI;
-    freq *= sensorValue/(1023.0);
-    float sinPart = .1*sin (freq*t);
-    float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+    //float freq = 2*M_PI*0.15;
+    //if(currentMillis>12000)
+    //freq=0;
+    //freq *= sensorValue/(1023.0);
+    //float sinPart = .1*sin (freq*t);
+    ////float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
-    //float voltage = sensorValue * (5.0 / 1023.0);
+    float voltage = sensorValue * (5.0 / 1023.0);
 
     fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)
@@ -217,7 +219,7 @@ void loop() {
     }
     else
     {
-      tone(6,500,dispInterval);
+     // tone(6,500,dispInterval);
       lcd.print(F("No Breath"));
     }
     
