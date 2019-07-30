@@ -6,7 +6,8 @@ list = dir(folder)
 ctr = 0;
 Errs = 0;
 for i=1:length(list)
-    if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker')))
+    attrs = getAttr(list(i).name);
+    if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker'))||strcmp(attrs.orifice,'N'))
         continue;
     end
     ctr=ctr+1;
@@ -40,19 +41,32 @@ Errs/ctr
 
 function out = getAttr(name)
 
-strs = strsplit(name)
+res.name = '';
+res.ambient = '';
+res.depth = '';
+res.rate = '';
+res.mask =  '';
+res.interrupted = '';
+res.orifice = '';
+
+
+
+strs = strsplit(name(1:end-4),'-')
 
 res.name = strs(1);
-res.ambient = strs(2);
-res.depth = strs(3);
-res.rate = strs(4);
-res.mask = strs(5);
-res.interrupted = strs(6);
-res.orifice = strs(7);
+
+if length(strs)== 7
+    res.ambient = strs(2);
+    res.depth = strs(3);
+    res.rate = strs(4);
+    res.mask = strs(5);
+    res.interrupted = strs(6);
+    res.orifice = strs(7);
+end
 
 
 
 
-return res;
+out = res;
 
 end

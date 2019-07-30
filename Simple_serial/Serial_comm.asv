@@ -36,7 +36,7 @@ datasets=5;
 dctr=0;
 
 
-data = NaN(600,datasets);
+data = [datasets,1];
 detect = false;
 Fs=125;
 
@@ -119,4 +119,5 @@ function [] = click(PushButton, EventData)
    isClicked =true;
 end
 
+function
 
