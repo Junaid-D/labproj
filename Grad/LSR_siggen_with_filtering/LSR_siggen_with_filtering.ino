@@ -191,9 +191,9 @@ void loop() {
       sendCtr++;
   if(sendCtr==sendCount)
   {
-     Serial.print(voltage);
+     Serial.print(voltage,5);
      Serial.print(" ");     
-     Serial.print(x/gradScaleFac);
+     Serial.print(x/gradScaleFac,5);
      Serial.print(" ");     
      Serial.print(stamps[numStamps - 1]);
      Serial.print(" ");
