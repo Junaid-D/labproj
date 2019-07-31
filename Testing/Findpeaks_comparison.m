@@ -5,9 +5,13 @@ folder = 'Full_test';
 list = dir(folder)
 ctr = 0;
 Errs = 0;
+
+tmp = struct2cell(list);
+names = tmp(1,:);
+attrList = cellfun(@getAttr,names);
 for i=1:length(list)
-    attrs = getAttr(list(i).name);
-    if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker'))||strcmp(attrs.orifice,'N'))
+    attrs = attrList(i);
+    if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker')))
         continue;
     end
     ctr=ctr+1;
@@ -63,10 +67,13 @@ if length(strs)== 7
     res.interrupted = strs(6);
     res.orifice = strs(7);
 end
-
-
-
-
 out = res;
+end
+
+function out = filterby(arr,cat,val)
+
+arr(~strcmp(arr.cat,val)) = [];
+out = arr;
+
 
 end

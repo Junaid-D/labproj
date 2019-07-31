@@ -5,8 +5,12 @@ folder = 'Full_test';
 list = dir(folder)
 ctr = 0;
 Errs = 0;
+
+tmp = struct2cell(list);
+names = tmp(1,:);
+attrList = cellfun(@getAttr,names);
 for i=1:length(list)
-    getAttr(list(i).name)
+    attrs = attrList(i);
     if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker')))
         continue;
     end
@@ -51,19 +55,25 @@ res.orifice = '';
 
 
 
-strs = strsplit(name)
+strs = strsplit(name(1:end-4),'-')
 
 res.name = strs(1);
 
-for 
-res.ambient = strs(2);
-res.depth = strs(3);
-res.rate = strs(4);
-res.mask = strs(5);
-res.interrupted = strs(6);
-res.orifice = strs(7);
-
-
+if length(strs)== 7
+    res.ambient = strs(2);
+    res.depth = strs(3);
+    res.rate = strs(4);
+    res.mask = strs(5);
+    res.interrupted = strs(6);
+    res.orifice = strs(7);
+end
 out = res;
+end
+
+function out = filterby(arr,cat,val)
+
+arr(~strcmp(arr.cat,val)) = [];
+out = arr;
+
 
 end
