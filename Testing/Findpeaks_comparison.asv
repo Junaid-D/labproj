@@ -9,10 +9,8 @@ Errs = 0;
 tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
-attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'ambient','30');
-%attrList = filterby(attrList,'name','J');
-
+%attrList = filterby(attrList,'countable','True');
+attrList = filterby(attrList,'orifice','M');
 for i=1:length(attrList)
     attrs = attrList(i);
    
@@ -37,11 +35,11 @@ for i=1:length(attrList)
 
 
     [pk,lk] = findpeaks(sig);
-    figure()
+    %figure()
     hold on;
-    plot(time,sig);
-    plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','*')
-    plot(time(lk),pk,'o')
+   % plot(time,sig);
+   % plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','*')
+   % plot(time(lk),pk,'o')
 
     hold off;
 
@@ -90,10 +88,13 @@ out = res;
 end
 
 function arr = filterby(arr,cat,val)
+t = {arr.(cat)}
+strcmp(arr(1).(cat),val)
 
-bools = logical(zeros(1,length(arr)));
-for i = 1:length(arr)
-    bools(i)=strcmp(arr(i).(cat),val);
-end
-arr = arr(bools);
+strcmp(({arr.(cat)}),val)
+
+
+arr = arr(strcmp(({arr.(cat)}),val))
+
+
 end
