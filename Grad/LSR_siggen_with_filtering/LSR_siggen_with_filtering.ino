@@ -171,11 +171,9 @@ void loop() {
 
 
     //float freq = 2*M_PI*0.15;
-    //if(currentMillis>12000)
-    //freq=0;
-    //freq *= sensorValue/(1023.0);
-    //float sinPart = .1*sin (freq*t);
-    ////float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+      //freq *= sensorValue/(1023.0);
+    //float sinPart = .01*sin (freq*t);
+    //float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
     float voltage = sensorValue * (5.0 / 1023.0);
 

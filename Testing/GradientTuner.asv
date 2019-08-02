@@ -20,16 +20,13 @@ numTaps = 31;
 filterWindow = zeros(1,numTaps);
 sampleRate = 120;
 slowRate = 0.1;
-
-sendCtr = 20;
-
-windowSize = 2;
+windowSize = floor((sampleRate / slowRate) / 32);
 flag = 0;
 
 window = zeros(1,windowSize);
 gradScaleFac = 1000;
 
-thresh = 0.3;
+thresh = 0.2;
 triggersX = [];
 triggersY = [];
 
@@ -38,24 +35,23 @@ for i = 1:length(x)
     
     
     window = [window(2:end) x(i,2)*gradScaleFac];
-        xy = 0;
-        x2 = 0;
+        xy=[];
+        x2=[];
         xi = 0;
         for j=1:windowSize
-            xy = xy+ j*window(j);
-            x2 = x2 +j*j;
+            xy(end+1)=j*window(j);
+            x2(end+1)=j*j;
             xi = xi +j;
         end
-    grad = (windowSize*xy - xi*sum(window)) / (windowSize * x2 - xi*xi);
+    grad=(windowSize*(sum(xy)) - (xi*sum(window)) )/( (windowSize*sum(x2)) - (xi*xi) )
+    
 
-    grads(i) = grad;
-
-
+    
     if (abs(grad)>thresh)
             if(grad<0 && flag==0)%crossover
                 flag=1;
                 triggersX(end+1)=x(i,5);
-                triggersY(end+1)=window(end)/gradScaleFac;
+                triggersY(end+1)=window(end);
             end
 
             if(flag==1 && grad>0)
