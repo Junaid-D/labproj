@@ -8,7 +8,7 @@ SoftwareSerial BTSerial(rxPin, txPin); // RX, TX
 void setup() {
   Serial.begin(9600);
   Serial.println("Enter AT commands:");
-  BTSerial.begin(38400);
+  BTSerial.begin(115200);
 }
 
 void loop() {

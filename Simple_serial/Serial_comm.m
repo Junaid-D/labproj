@@ -4,7 +4,7 @@ clc;
 % Copyright 2014 The MathWorks, Inc.
 %%%https://www.mathworks.com/matlabcentral/fileexchange/46775-arduino-serial-data-acquisition
 %% Create serial object for Arduino
-s = Bluetooth('HC-05',1); % change the COM Port number as needed
+s = Bluetooth('RRM_01',1); % change the COM Port number as needed
 %% Connect the serial port to Arduino
 s.InputBufferSize = 1024; % read only one byte every time
 s.Terminator = 'CR/LF'
