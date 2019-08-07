@@ -11,11 +11,9 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
 attrList = filterby(attrList,'ambient','6');
-attrList = filterby(attrList,'depth','D');
-
 %attrList = filterby(attrList,'name','J');
 
-for i=1:length(attrList)
+for i=1:5
     attrs = attrList(i);
    
 
@@ -39,16 +37,9 @@ for i=1:length(attrList)
     
     minDist = 0;
     
-    if(strcmp(attrs.depth,'S'))
-        minDist = 2;
-    elseif (strcmp(attrs.depth,'D'))
-        minDist = 0;
-          
-    else
-        minDist = 5;
-    end
+    if(attrList(i).
     
-    [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
+    [pk,lk] = findpeaks(sig,'MinPeakDistance',10);
     figure()
     hold on;
     plot(time,sig);
