@@ -41,7 +41,7 @@ float filterWindow [numTaps] = {0};
 
 const int gradScaleFac = 1000;
 
-  const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+  const int rs = 10, en = 9, d4 = 5, d5 = 6, d6 = 7, d7 = 8;
   LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -171,11 +171,11 @@ void loop() {
     if( currentMillis>20000)
     freq = 2*M_PI*0.2;
     
-    float sinPart = .1*sin (freq*t);
-    float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+    //float sinPart = .1*sin (freq*t);
+    //float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
     int sensorValue = analogRead(A0);
-    //float voltage = sensorValue * (5.0 / 1023.0);
+    float voltage = sensorValue * (5.0 / 1023.0);
 
     fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)
