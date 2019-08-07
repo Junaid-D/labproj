@@ -16,6 +16,7 @@ t = x(:,5).'/1000;
 tResample = interp(t,40);
 signal = interp1(t,x(:,2).',tResample);
 
+signal = awgn(signal,60);
 %plot(tResample,signal);
 %plot(x(:,5).'/1000,x(:,2).');
 hold off;

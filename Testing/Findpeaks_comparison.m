@@ -15,7 +15,7 @@ attrList = filterby(attrList,'depth','D');
 
 %attrList = filterby(attrList,'name','J');
 
-for i=1:length(attrList)
+for i=1:5
     attrs = attrList(i);
    
 
@@ -28,9 +28,26 @@ for i=1:length(attrList)
 
 
     sig = x(:,2).';
-    time = x(:,end).';
+    time = x(:,end).'/1000;
 
+    Ts = time(2)-time(1);
+    Fs = 1/Ts;
+    L = length(sig);
+    Y = fft(sig);
+    f = Fs*(0:(L/2))/L;
+    P2 = abs(Y/L);
+    P1 = P2(1:L/2+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    figure();
+    subplot(3,1,1);
 
+    plot(f(2:end)*60,P1(2:end)) ;
+    subplot(3,1,2);
+
+    plot(time,x(:,4).');
+
+    
+    
     detsWStamps=x;
 
     [~,idu] = unique(detsWStamps(:,3));
@@ -49,10 +66,11 @@ for i=1:length(attrList)
     end
     
     [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
-    figure()
+    subplot(3,1,3);
+
     hold on;
     plot(time,sig);
-    plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','*')
+    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
     plot(time(lk),pk,'o')
 
     hold off;
