@@ -1,17 +1,17 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
   <configuration file="C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp\app1.prj" location="C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp" name="app1" target="target.ezdeploy.standalone" target-name="Application Compiler">
-    <param.appname>app1</param.appname>
+    <param.appname>PatientMonitor_v09</param.appname>
     <param.icon />
     <param.icons />
-    <param.version>1.0</param.version>
+    <param.version>0.9</param.version>
     <param.authnamewatermark />
     <param.email />
     <param.company />
     <param.summary />
     <param.description />
-    <param.screenshot />
+    <param.screenshot>${PROJECT_ROOT}\467.gif</param.screenshot>
     <param.guid />
-    <param.installpath.string>\app1\</param.installpath.string>
+    <param.installpath.string>\PatientMonitor_v09\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
     <param.install.notes />
@@ -27,7 +27,7 @@
     <param.web.mcr>true</param.web.mcr>
     <param.package.mcr>false</param.package.mcr>
     <param.no.mcr>false</param.no.mcr>
-    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.web.mcr.name>newInstall</param.web.mcr.name>
     <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
     <param.windows.command.prompt>true</param.windows.command.prompt>
@@ -45,13 +45,11 @@
     <unset>
       <param.icon />
       <param.icons />
-      <param.version />
       <param.authnamewatermark />
       <param.email />
       <param.company />
       <param.summary />
       <param.description />
-      <param.screenshot />
       <param.guid />
       <param.installpath.string />
       <param.installpath.combo />
@@ -69,7 +67,6 @@
       <param.web.mcr />
       <param.package.mcr />
       <param.no.mcr />
-      <param.web.mcr.name />
       <param.package.mcr.name />
       <param.no.mcr.name />
       <param.windows.command.prompt />
@@ -85,7 +82,7 @@
     <fileset.depfun />
     <build-deliverables>
       <file location="${PROJECT_ROOT}\app1\for_testing" name="splash.png" optional="false">C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp\app1\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\app1\for_testing" name="app1.exe" optional="false">C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp\app1\for_testing\app1.exe</file>
+      <file location="${PROJECT_ROOT}\app1\for_testing" name="PatientMonitor_v09.exe" optional="false">C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp\app1\for_testing\PatientMonitor_v09.exe</file>
       <file location="${PROJECT_ROOT}\app1\for_testing" name="readme.txt" optional="true">C:\Users\USER\Dev\Proj\labproj\Simple_serial\GUIapp\app1\for_testing\readme.txt</file>
     </build-deliverables>
     <workflow />
