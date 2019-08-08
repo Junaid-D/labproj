@@ -1,6 +1,6 @@
 clc;
 clear all;
-file = 'J-30-S-N-N.csv';
+file = 'J-6-S-N-N.csv';
 x = csvread(file);
 
 detsWStamps=x;
@@ -16,7 +16,7 @@ t = x(:,5).'/1000;
 tResample = interp(t,40);
 signal = interp1(t,x(:,2).',tResample);
 
-signal = awgn(signal,60);
+%signal = awgn(signal,60);
 %plot(tResample,signal);
 %plot(x(:,5).'/1000,x(:,2).');
 hold off;
@@ -76,7 +76,7 @@ hold on;
 plot(tResample, signal);
 %line([t(windowSize) t(windowSize)], [27 33],'Color','black'); 
 plot(triggersX,triggersY,'r*');
-%plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','go');
+plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','go');
 %plot(tResample, grads);
 hold off
 

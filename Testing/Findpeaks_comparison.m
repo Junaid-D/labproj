@@ -10,12 +10,12 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'ambient','6');
+attrList = filterby(attrList,'ambient','24');
 attrList = filterby(attrList,'depth','D');
 
 %attrList = filterby(attrList,'name','J');
 
-for i=1:5
+for i=1:length(attrList)
     attrs = attrList(i);
    
 
@@ -29,6 +29,10 @@ for i=1:5
 
     sig = x(:,2).';
     time = x(:,end).'/1000;
+    
+    [tResamp,sigResamp] = interper(time,sig,40);
+    
+    tunedDets = gradDetector(tResamp,sigResamp,0.05);
 
     Ts = time(2)-time(1);
     Fs = 1/Ts;
@@ -71,11 +75,12 @@ for i=1:5
     hold on;
     plot(time,sig);
     plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+    plot(tunedDets(:,1).',tunedDets(:,2).','^')
     plot(time(lk),pk,'o')
 
     hold off;
 
-    Errs= Errs + 100*abs(length(pk)-length(uniqueDetVals(:,2).'))/length(pk)
+    Errs= Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
 
 end
 Errs/ctr

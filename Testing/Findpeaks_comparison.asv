@@ -11,6 +11,8 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
 attrList = filterby(attrList,'ambient','6');
+attrList = filterby(attrList,'depth','D');
+
 %attrList = filterby(attrList,'name','J');
 
 for i=1:5
@@ -26,9 +28,30 @@ for i=1:5
 
 
     sig = x(:,2).';
-    time = x(:,end).';
+    time = x(:,end).'/1000;
+    
+    [tResamp,sigResamp] = interper(tResamp,sigResamp,40);
+    
+    tunedDets = gradDetector(tResamp,sigResamp,0.05);
 
+    Ts = time(2)-time(1);
+    Fs = 1/Ts;
+    L = length(sig);
+    Y = fft(sig);
+    f = Fs*(0:(L/2))/L;
+    P2 = abs(Y/L);
+    P1 = P2(1:L/2+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    figure();
+    subplot(3,1,1);
 
+    plot(f(2:end)*60,P1(2:end)) ;
+    subplot(3,1,2);
+
+    plot(time,x(:,4).');
+
+    
+    
     detsWStamps=x;
 
     [~,idu] = unique(detsWStamps(:,3));
@@ -37,13 +60,23 @@ for i=1:5
     
     minDist = 0;
     
-    if(attrList(i).
+    if(strcmp(attrs.depth,'S'))
+        minDist = 2;
+    elseif (strcmp(attrs.depth,'D'))
+        minDist = 0;
+          
+    else
+        minDist = 5;
+    end
     
-    [pk,lk] = findpeaks(sig,'MinPeakDistance',10);
-    figure()
+    [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
+    subplot(3,1,3);
+
     hold on;
     plot(time,sig);
-    plot(uniqueDetVals(:,5).',uniqueDetVals(:,2).','*')
+    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+    plot(tunedDets(:,1).',tunedDests(:,2).')
+    
     plot(time(lk),pk,'o')
 
     hold off;
