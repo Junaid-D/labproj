@@ -11,7 +11,7 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
 attrList = filterby(attrList,'ambient','24');
-attrList = filterby(attrList,'depth','D');
+attrList = filterby(attrList,'orifice','N');
 
 %attrList = filterby(attrList,'name','J');
 
@@ -30,25 +30,58 @@ for i=1:length(attrList)
     sig = x(:,2).';
     time = x(:,end).'/1000;
     
+    
+    
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.05);
+    %figure();
+    
 
-    Ts = time(2)-time(1);
+    split = 5;
+    
+    sigReshaped = reshape(sigResamp,[],split);
+    tReshaped = reshape(tResamp,[],split);
+    
+    Ts = tResamp(2)-tResamp(1);
     Fs = 1/Ts;
-    L = length(sig);
-    Y = fft(sig);
+    
+    for j = 1 : split
+    
+    L = length(sigReshaped(:,j));
+    Y = fft(sigReshaped(:,j));
     f = Fs*(0:(L/2))/L;
     P2 = abs(Y/L);
     P1 = P2(1:L/2+1);
     P1(2:end-1) = 2*P1(2:end-1);
-    figure();
-    subplot(3,1,1);
+    
+    [val,index] = max(P1(2:end));
 
-    plot(f(2:end)*60,P1(2:end)) ;
-    subplot(3,1,2);
-
-    plot(time,x(:,4).');
+    tStart = tReshaped(1,j);
+    tEnd = tReshaped(end,j);
+    
+    includedTimePts = and(time>= tStart , time<tEnd);
+    RRpts = x(:,4).';
+    RRpts = RRpts(includedTimePts);
+    
+    avgRR = mean(RRpts(RRpts>0));
+    
+    txt = strcat('tStart  = ',num2str(tStart),' tEnd = ', num2str(tEnd),' \newline ',' FFT = ', num2str(f(index+1)*60),' AVG RR  = ',num2str(avgRR));
+    
+%     subplot(3,split,j);
+%     hold on;
+%     plot(f(2:end)*60,P1(2:end)) ;
+%     plot(f(index+1)*60,val,'r^','markerfacecolor',[1 0 0])
+%     text(f(index+1)*60,val,txt) 
+% 
+%     hold off;
+%     xlim([0 200]);
+    
+    %ylim('auto');
+    end
+    
+%     subplot(3,split,[split+1, 2*split]);
+%     plot(time,x(:,4).');
 
     
     
@@ -60,9 +93,9 @@ for i=1:length(attrList)
     
     minDist = 0;
     
-    if(strcmp(attrs.depth,'S'))
+    if(strcmp(attrs.depth,'x'))
         minDist = 2;
-    elseif (strcmp(attrs.depth,'D'))
+    elseif (strcmp(attrs.depth,'x'))
         minDist = 0;
           
     else
@@ -70,15 +103,15 @@ for i=1:length(attrList)
     end
     
     [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
-    subplot(3,1,3);
-
-    hold on;
-    plot(time,sig);
-    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-    plot(tunedDets(:,1).',tunedDets(:,2).','^')
-    plot(time(lk),pk,'o')
-
-    hold off;
+%     subplot(3,split,[2*split+1, 3*split]);
+% 
+%     hold on;
+%     %plot(time,sig);
+%     %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+%     %plot(tunedDets(:,1).',tunedDets(:,2).','^')
+%     %plot(time(lk),pk,'o')
+% 
+%     hold off;
 
     Errs= Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
 

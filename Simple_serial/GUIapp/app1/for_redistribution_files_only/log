@@ -1,0 +1,22 @@
+Warning: File 'manandlungs.svg' is not readable.
+> In matlab.ui.internal.IconUtils.validateImageSource (line 100)
+  In matlab.ui.control.Image/set.ImageSource (line 84)
+  In app1/createComponents (line 501)
+  In app1 (line 570)
+Warning: File 'g2.gif' is not readable.
+> In matlab.ui.internal.IconUtils.validateImageSource (line 100)
+  In matlab.ui.control.Image/set.ImageSource (line 84)
+  In app1/createComponents (line 507)
+  In app1 (line 570)
+Native Library intelbth_x64 not available
+Native Library bluecove_x64 not available
+Dot indexing is not supported for variables of this type.
+
+Error in app1/startupFcn (line 92)
+
+Error in appdesigner.internal.service.AppManagementService/tryCallback (line 336)
+
+Error in matlab.apps.AppBase/runStartupFcn (line 41)
+
+Error in app1 (line 576)
+
