@@ -12,22 +12,17 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'ambient','6');
-%attrList = filterby(attrList,'orifice','M');
-%attrList = filterby(attrList,'depth','S');
+attrList = filterby(attrList,'ambient','35');
 
-attrList = filterby(attrList,'name','J');
 
 for i=1:length(attrList)
     attrs = attrList(i);
    
 
-    if(list(i).isdir==1 || ~isempty(strfind(list(i).name,'speaker')))
-        continue;
-    end
+
     
     ctr=ctr+1;
-    x = csvread(list(i).name);
+    x = csvread(attrList(i).filename);
 
 
     sig = x(:,2).';
@@ -99,7 +94,13 @@ for i=1:length(attrList)
     uniqueDetVals = uniqueDetVals(2:end,:);
     
     detPoints = uniqueDetVals(:,3).';
-    valAtDetPoints = interp1(uniqueDetVals(:,5).',uniqueDetVals(:,2).',detPoints);
+    if(length(detPoints)>1)
+        valAtDetPoints = interp1(uniqueDetVals(:,5).',uniqueDetVals(:,2).',detPoints);
+    elseif (length(detPoints)>0)
+        valAtDetPoints = uniqueDetVals(1,2);
+    else
+        valAtDetPoints = [];
+    end
     minDist = 0;
     
     if(strcmp(attrs.depth,'x'))
@@ -141,6 +142,7 @@ res.rate = '';
 res.mask =  '';
 res.interrupted = '';
 res.orifice = '';
+res.filename = name;
 
 res.countable = 'False';
 

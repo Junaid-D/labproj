@@ -1,6 +1,6 @@
 clc;
 clear all;
-file = 'R1-24-S-N-N.csv';
+file = 'M-35-N-N-M.csv';
 x = csvread(file);
 
 detsWStamps=x;
@@ -77,7 +77,7 @@ hold on;
 %line([t(windowSize) t(windowSize)], [27 33],'Color','black'); 
 %plot(triggersX,triggersY,'r*');
 %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','go');
-band1 = ones(1,length(tResample))*0.05;
+band1 = ones(1,length(tResample))*thresh;
 
 above = 1;
 hsytCount = 0;
