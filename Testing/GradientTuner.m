@@ -77,10 +77,33 @@ hold on;
 %line([t(windowSize) t(windowSize)], [27 33],'Color','black'); 
 %plot(triggersX,triggersY,'r*');
 %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','go');
-band1 = ones(length(tResample))*0.05;
+band1 = ones(1,length(tResample))*0.05;
+
+above = 1;
+hsytCount = 0;
+%%%detect hysterysis errors
+crossPos = [];
+crossNeg = [];
+grads = grads - thresh;
+
+zci = @(v) find(v(:).*circshift(v(:), [-1 0]) <= 0);% Returns Zero-Crossing Indices Of Argument Vector
+zeroCrosses1 = zci(grads);
+
+
+grads = grads + 2*thresh;
+
+
+zeroCrosses2 = zci(grads);
+grads = grads - thresh;
+
+%%%%
+
 plot(tResample, grads,'b');
 plot(tResample, band1,'g');
 plot(tResample, -band1,'g');
+plot(tResample(zeroCrosses1),grads(zeroCrosses1),'r*')
+plot(tResample(zeroCrosses2),grads(zeroCrosses2),'m*')
+
 
 hold off
 

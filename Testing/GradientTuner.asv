@@ -77,7 +77,15 @@ hold on;
 %line([t(windowSize) t(windowSize)], [27 33],'Color','black'); 
 %plot(triggersX,triggersY,'r*');
 %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','go');
-band1 = ones(length(tResample))*0.05;
+band1 = ones(1,length(tResample))*0.05;
+
+above = 0;
+%%%detect hysterysis errors
+
+
+
+%%%%
+
 plot(tResample, grads,'b');
 plot(tResample, band1,'g');
 plot(tResample, -band1,'g');
