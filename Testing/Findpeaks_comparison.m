@@ -2,18 +2,21 @@ clc;
 clear all;
 
 folder = 'Full_test';
-list = dir('*.csv')
+list = dir('*.csv');
 ctr = 0;
 Errs = 0;
+RRErrTot = 0 ;
+
 
 tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'ambient','24');
-attrList = filterby(attrList,'orifice','N');
+attrList = filterby(attrList,'ambient','6');
+%attrList = filterby(attrList,'orifice','M');
+%attrList = filterby(attrList,'depth','S');
 
-%attrList = filterby(attrList,'name','J');
+attrList = filterby(attrList,'name','J');
 
 for i=1:length(attrList)
     attrs = attrList(i);
@@ -35,7 +38,7 @@ for i=1:length(attrList)
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.05);
-    %figure();
+     figure();
     
 
     split = 5;
@@ -45,7 +48,7 @@ for i=1:length(attrList)
     
     Ts = tResamp(2)-tResamp(1);
     Fs = 1/Ts;
-    
+    RRErrs = 0;
     for j = 1 : split
     
     L = length(sigReshaped(:,j));
@@ -64,10 +67,14 @@ for i=1:length(attrList)
     RRpts = x(:,4).';
     RRpts = RRpts(includedTimePts);
     
+    dominantFreq = f(index+1)*60;
+    
     avgRR = mean(RRpts(RRpts>0));
     
     txt = strcat('tStart  = ',num2str(tStart),' tEnd = ', num2str(tEnd),' \newline ',' FFT = ', num2str(f(index+1)*60),' AVG RR  = ',num2str(avgRR));
     
+    RRErrs = RRErrs + (abs(dominantFreq - avgRR)/dominantFreq)*100;
+%     
 %     subplot(3,split,j);
 %     hold on;
 %     plot(f(2:end)*60,P1(2:end)) ;
@@ -76,21 +83,23 @@ for i=1:length(attrList)
 % 
 %     hold off;
 %     xlim([0 200]);
-    
-    %ylim('auto');
+%     
+%     ylim('auto');
     end
     
 %     subplot(3,split,[split+1, 2*split]);
 %     plot(time,x(:,4).');
 
     
-    
+    RRErrs = RRErrs / split;
     detsWStamps=x;
 
     [~,idu] = unique(detsWStamps(:,3));
     uniqueDetVals = detsWStamps(idu,:);
     uniqueDetVals = uniqueDetVals(2:end,:);
     
+    detPoints = uniqueDetVals(:,3).';
+    valAtDetPoints = interp1(uniqueDetVals(:,5).',uniqueDetVals(:,2).',detPoints);
     minDist = 0;
     
     if(strcmp(attrs.depth,'x'))
@@ -103,20 +112,25 @@ for i=1:length(attrList)
     end
     
     [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
-%     subplot(3,split,[2*split+1, 3*split]);
-% 
-%     hold on;
-%     %plot(time,sig);
-%     %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-%     %plot(tunedDets(:,1).',tunedDets(:,2).','^')
-%     %plot(time(lk),pk,'o')
-% 
-%     hold off;
+    subplot(3,split,[2*split+1, 3*split]);
 
-    Errs= Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
+    hold on;
+    plot(time,sig);
+    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+    plot(detPoints/1000, valAtDetPoints, '>');
+    plot(tunedDets(:,1).',tunedDets(:,2).','^')
+    plot(time(lk),pk,'o')
 
+    hold off;
+
+    Errs = Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
+    RRErrTot = RRErrTot + RRErrs;
 end
-Errs/ctr
+countRelErrorPerc = Errs/ctr
+
+RRRelErrorPerc = RRErrTot/ctr;
+
+
 
 function out = getAttr(name)
 

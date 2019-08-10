@@ -42,7 +42,7 @@ function [dets] = gradDetector(time,sig,threshold)
         if (abs(grad)>threshold)
                 if(grad<0 && flag==0)%crossover
                     flag=1;
-                    triggersX(end+1)=time(i)
+                    triggersX(end+1)=time(i);
                     triggersY(end+1)=window(end)/gradScaleFac;
                 end
 
