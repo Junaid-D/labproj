@@ -12,10 +12,10 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'name','R1');
+attrList = filterby(attrList,'name','R2');
 
 
-for i=2 : length(attrList)
+for i=1 : length(attrList)
     attrs = attrList(i);
     
     ctr=ctr+1;
@@ -42,7 +42,7 @@ for i=2 : length(attrList)
     plot(time,sig);
    
     [xpts,ypts] = getpts
-    
+    close;
     folder = uigetdir();
     
     f = fullfile(folder,attrList(i).filename);
