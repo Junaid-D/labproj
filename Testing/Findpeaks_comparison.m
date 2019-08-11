@@ -2,7 +2,7 @@ clc;
 clear all;
 
 folder = 'Full_test';
-list = dir('*.csv');
+list = dir('**/*.csv');
 ctr = 0;
 Errs = 0;
 RRErrTot = 0 ;
@@ -12,10 +12,10 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
-attrList = filterby(attrList,'ambient','35');
+attrList = filterby(attrList,'ambient','30');
 
 
-for i=1:length(attrList)
+for i=1:1
     attrs = attrList(i);
    
 
@@ -33,7 +33,7 @@ for i=1:length(attrList)
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.05);
-     figure();
+    figure();
     
 
     split = 5;
@@ -103,25 +103,24 @@ for i=1:length(attrList)
     end
     minDist = 0;
     
-    if(strcmp(attrs.depth,'x'))
-        minDist = 2;
-    elseif (strcmp(attrs.depth,'x'))
-        minDist = 0;
-          
+    if(strcmp(attrs.depth,'S'))
+        minDist = 4;
+    elseif (strcmp(attrs.depth,'D'))
+        minDist = 6;
     else
         minDist = 5;
     end
     
-    [pk,lk] = findpeaks(sig,'MinPeakDistance',minDist);
-    subplot(3,split,[2*split+1, 3*split]);
+    [lk,pk] = peakfinder(sig);
+%     subplot(3,split,[2*split+1, 3*split]);
 
     hold on;
     plot(time,sig);
-    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-    plot(detPoints/1000, valAtDetPoints, '>');
-    plot(tunedDets(:,1).',tunedDets(:,2).','^')
-    plot(time(lk),pk,'o')
-
+  %  plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+  %  plot(detPoints/1000, valAtDetPoints, '>');
+ %   plot(tunedDets(:,1).',tunedDets(:,2).','^')
+ %   plot(time(lk),pk,'o')
+ 
     hold off;
 
     Errs = Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
