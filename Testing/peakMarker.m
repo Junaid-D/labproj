@@ -13,7 +13,7 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True');
 attrList = filterby(attrList,'name','M');
-attrList = filterby(attrList,'ambient','30');
+attrList = filterby(attrList,'ambient','6');
 
 
 for i=1 : length(attrList)
