@@ -2,26 +2,37 @@ clc;
 clear all;
 
 folder = 'Full_test';
+cd (folder);
 list = dir('*.csv');
+subfolder = pwd();
+cd('..');
+thisFolder = pwd();
 ctr = 0;
 Errs = 0;
+Errs2 = 0;
 RRErrTot = 0 ;
 
 
 tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
-attrList = filterby(attrList,'countable','True');
-%attrList = filterby(attrList,'name','J');
-attrList = filterby(attrList,'ambient','29');
+attrList = filterby(attrList,'countable','True',1);
+attrList = filterby(attrList,'ambient','23',1);
+attrList = filterby(attrList,'orifice','M',1);
+attrList = filterby(attrList,'name','J',1);
+attrList = filterby(attrList,'rate','N',1);
 
 
-for i=1 : length(attrList)
+
+for i=4:length(attrList)
     attrs = attrList(i);
+   
+
+
     
     ctr=ctr+1;
-    x = csvread(attrList(i).filename);
-
+    fullpth = fullfile(subfolder, attrList(i).filename);
+    x = csvread(fullpth);
 
     sig = x(:,2).';
     time = x(:,end).'/1000;
@@ -94,13 +105,4 @@ if length(strs)== 5
 end
 
 out = res;
-end
-
-function arr = filterby(arr,cat,val)
-
-bools = logical(zeros(1,length(arr)));
-for i = 1:length(arr)
-    bools(i)=strcmp(arr(i).(cat),val);
-end
-arr = arr(bools);
 end
