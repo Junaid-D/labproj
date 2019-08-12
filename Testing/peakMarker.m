@@ -18,13 +18,13 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
 attrList = filterby(attrList,'ambient','23',1);
-attrList = filterby(attrList,'orifice','M',1);
+attrList = filterby(attrList,'orifice','N',1);
 attrList = filterby(attrList,'name','J',1);
 attrList = filterby(attrList,'rate','N',1);
 
 
 
-for i=4:length(attrList)
+for i=1:length(attrList)
     attrs = attrList(i);
    
 
