@@ -2,8 +2,11 @@ clc;
 clear all;
 
 folder = 'Full_test';
+cd(folder);
 list = dir('*.csv');
-thisFolder = list(1).folder;
+subfolder = pwd();
+cd('..');
+thisFolder = pwd();
 
 ctr = 0;
 Errs = 0;
@@ -16,16 +19,19 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
 attrList = filterby(attrList,'ambient','35',0);
+attrList = filterby(attrList,'name','J',1);
+attrList = filterby(attrList,'rate','S',1);
 
 
-for i=1:length(attrList)
+
+for i=5:length(attrList)
     attrs = attrList(i);
    
 
 
     
     ctr=ctr+1;
-    x = csvread(attrList(i).filename);
+    x = csvread(fullfile(subfolder,attrList(i).filename));
 
 
     sig = x(:,2).';
@@ -35,8 +41,8 @@ for i=1:length(attrList)
     
     [tResamp,sigResamp] = interper(time,sig,40);
     
-    tunedDets = gradDetector(tResamp,sigResamp,0.05);
-%      figure();
+    tunedDets = gradDetector(tResamp,sigResamp,0.1);
+      figure();
     
 
     split = 5;
@@ -113,16 +119,16 @@ for i=1:length(attrList)
   %  pk = manDetects(:,2).';
     pk  = interp1(tResamp,sigResamp,lk);% get values from interp
 
-%     subplot(3,split,[2*split+1, 3*split]);
-% 
-%     hold on;
-%    plot(time,sig);
-%    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-%    plot(detPoints/1000, valAtDetPoints, '>');
-%    plot(tunedDets(:,1).',tunedDets(:,2).','^')
-%    plot(lk,pk,'o')
-%  
-%     hold off;
+    subplot(3,split,[2*split+1, 3*split]);
+
+    hold on;
+   plot(time,sig);
+   plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+   plot(detPoints/1000, valAtDetPoints, '>');
+   plot(tunedDets(:,1).',tunedDets(:,2).','^')
+   plot(lk,pk,'o')
+ 
+    hold off;
     Errs2 = Errs2 + 100*abs(length(pk)-length(uniqueDetVals(:,2).'))/length(pk)
     Errs = Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
     RRErrTot = RRErrTot + RRErrs;

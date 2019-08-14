@@ -14,17 +14,19 @@ const int sampleRate = 120;
 const float slowRate = 0.1;
 const long interval = (1 / (float)sampleRate) * 1000;        // interval at which to blink (milliseconds)
 
-const byte sendCount = 20;
+const byte sendCount = 10;
 byte sendCtr = 0;
 
+char detChar = '*';
+unsigned long lastStamp = 0;
 
-const float thresholdGrad = 0.2;
-
+const float thresholdGrad = 2.0;
 
 const int windowSize = (sampleRate / slowRate) / 32;
 
 const byte dispInterval = 1000;           // interval at which to blink (milliseconds)
 unsigned long dispMillis = 0;
+char gradBuf[12];
 
 
 float sampleWindow[windowSize] = {0};
@@ -39,7 +41,7 @@ float filterCoeffs[numTaps] = {0.00490978693901733, 0.00552744069659965, 0.00735
 byte filterReady = 0;
 float filterWindow [numTaps] = {0};
 
-const int gradScaleFac = 1000;
+const int gradScaleFac = 10000;
 
   const int rs = 10, en = 9, d4 = 5, d5 = 6, d6 = 7, d7 = 8;
   LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
@@ -138,7 +140,7 @@ void updateRR()
   for (int i = 0; i < numStamps - 1; i++)
   {
     
-    if (stamps[i] > 0 )
+    if (stamps[i] > 0 && (cur-stamps[i])<averagePeriod*1000 )
     {
       sum += windowWeights[i];
       avg += (stamps[i + 1] - stamps[i])*windowWeights[i];
@@ -184,6 +186,14 @@ void loop() {
       appendWindow(x);
       calcGrad();
       detect();
+      if(stamps[numStamps - 1]!=lastStamp)
+      {
+        lastStamp = stamps[numStamps - 1];
+        if(detChar == '*')
+          detChar = '.';
+        else
+          detChar = '*';
+      }
       updateRR();
     
       sendCtr++;
@@ -210,10 +220,20 @@ void loop() {
     lcd.print(RR, 5);
 
     lcd.setCursor(0, 1);
-    lcd.print(F("Grad:"));
-    lcd.print(Grad, 3);
-    lcd.print(F("S:"));
-    lcd.print(interval);
+    if( (currentMillis - stamps[numStamps-1]) < averagePeriod*1000)
+    {
+      lcd.print(F("G:"));
+      char* gradStr = dtostrf(Grad,4,4,gradBuf);
+      lcd.print(gradStr);
+    }
+    else
+    {
+      lcd.print(F("                "));
+      lcd.setCursor(0, 1);
+      lcd.print(F("No Breath"));
+    }
+    lcd.setCursor(12, 1);
+    lcd.print(detChar);
 
   }
 }

@@ -1,8 +1,9 @@
 clc;
 clear all;
-file = 'M-35-N-N-M.csv';
+file = 'J-23-N-N-D-Y-N.csv';
+cd('Full_test');
 x = csvread(file);
-
+cd('..');
 detsWStamps=x;
 
 [~,idu] = unique(detsWStamps(:,3));
@@ -15,7 +16,7 @@ hold on;
 t = x(:,5).'/1000;
 tResample = interp(t,40);
 signal = interp1(t,x(:,2).',tResample);
-
+signal = smooth(signal);
 %signal = awgn(signal,60);
 %plot(tResample,signal);
 %plot(x(:,5).'/1000,x(:,2).');
@@ -35,9 +36,9 @@ windowSize = ceil(sampleRate/slowRate/32);
 flag = 0;
 
 window = zeros(1,windowSize);
-gradScaleFac = 1000;
+gradScaleFac = 10000;
 
-thresh = 0.05;
+thresh = 2;
 triggersX = [];
 triggersY = [];
 
@@ -62,7 +63,7 @@ for i = 1:length(tResample)
     if (abs(grad)>thresh)
             if(grad<0 && flag==0)%crossover
                 flag=1;
-                triggersX(end+1)=tResample(i)
+                triggersX(end+1)=tResample(i);
                 triggersY(end+1)=window(end)/gradScaleFac;
             end
 
@@ -72,8 +73,9 @@ for i = 1:length(tResample)
      end
 
 end
+
+figure();
 hold on;
-%plot(tResample, signal);
 %line([t(windowSize) t(windowSize)], [27 33],'Color','black'); 
 %plot(triggersX,triggersY,'r*');
 %plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','go');
