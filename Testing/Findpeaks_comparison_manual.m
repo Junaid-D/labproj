@@ -1,7 +1,7 @@
 clc;
 clear all;
 
-folder = 'Full_test';
+folder = 'AD820';
 cd(folder);
 list = dir('*.csv');
 subfolder = pwd();
@@ -18,13 +18,12 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
-attrList = filterby(attrList,'ambient','35',0);
-attrList = filterby(attrList,'name','J',1);
-attrList = filterby(attrList,'rate','S',1);
+attrList = filterby(attrList,'ambient','30',1);
+attrList = filterby(attrList,'depth','D',1);
 
 
 
-for i=5:length(attrList)
+for i=1:length(attrList)
     attrs = attrList(i);
    
 
@@ -33,6 +32,7 @@ for i=5:length(attrList)
     ctr=ctr+1;
     x = csvread(fullfile(subfolder,attrList(i).filename));
 
+    x(any(isnan(x), 2), :) = [];
 
     sig = x(:,2).';
     time = x(:,end).'/1000;
