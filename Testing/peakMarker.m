@@ -1,7 +1,7 @@
 clc;
 clear all;
 
-folder = 'Full_test';
+folder = 'AD820';
 cd (folder);
 list = dir('*.csv');
 subfolder = pwd();
@@ -17,10 +17,8 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
-attrList = filterby(attrList,'ambient','23',1);
-attrList = filterby(attrList,'orifice','N',1);
-attrList = filterby(attrList,'name','M',1);
-attrList = filterby(attrList,'rate','S',1);
+attrList = filterby(attrList,'ambient','25',1);
+attrList = filterby(attrList,'name','MAD',1);
 
 
 
@@ -36,20 +34,7 @@ for i=1:length(attrList)
 
     sig = x(:,2).';
     time = x(:,end).'/1000;
-      
-    [tResamp,sigResamp] = interper(time,sig,40);
-    
-    tunedDets = gradDetector(tResamp,sigResamp,0.05);
-    figure();
-    
-    split = 5;
-    
-    sigReshaped = reshape(sigResamp,[],split);
-    tReshaped = reshape(tResamp,[],split);
-    
-    Ts = tResamp(2)-tResamp(1);
-    Fs = 1/Ts;
-    RRErrs = 0;
+
     
     plot(time,sig);
    
