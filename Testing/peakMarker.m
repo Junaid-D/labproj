@@ -18,7 +18,7 @@ names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
 attrList = filterby(attrList,'ambient','25',1);
-attrList = filterby(attrList,'name','MAD',1);
+attrList = filterby(attrList,'name','JAD',1);
 
 
 
