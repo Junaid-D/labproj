@@ -4,5 +4,5 @@
     "BTPrefix": "RR",
     "showBT": true,
     "dumpInterval" : 20,
-    "showTemp" : true
+    "showTemp" : false
 }

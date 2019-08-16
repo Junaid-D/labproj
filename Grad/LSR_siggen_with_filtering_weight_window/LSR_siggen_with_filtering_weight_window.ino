@@ -8,6 +8,8 @@ const byte numStamps = 5; //n
 
 float windowWeights[numStamps-1] = {0.05,0.1,0.4,0.45};
 const byte averagePeriod = 10; //t
+const byte windowRRInterval = 15; //t
+
 
 // constants won't change:
 const int sampleRate = 120;
@@ -140,7 +142,7 @@ void updateRR()
   for (int i = 0; i < numStamps - 1; i++)
   {
     
-    if (stamps[i] > 0 && (cur-stamps[i])<averagePeriod*1000 )
+    if (stamps[i] > 0 && (cur-stamps[i])<windowRRInterval*1000 )
     {
       sum += windowWeights[i];
       avg += (stamps[i + 1] - stamps[i])*windowWeights[i];
