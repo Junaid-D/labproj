@@ -17,7 +17,7 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
-attrList = filterby(attrList,'ambient','35',1);
+attrList = filterby(attrList,'ambient','7',1);
 attrList = filterby(attrList,'name','MAD',1);
 
 
