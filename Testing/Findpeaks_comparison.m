@@ -10,7 +10,8 @@ RRErrTot = 0 ;
 
 tmp = struct2cell(list);
 names = tmp(1,:);
-attrList = cellfun(@getAttr,names);
+path = tmp(2,:);
+attrList = cellfun(@getAttr,names,path);
 attrList = filterby(attrList,'countable','True');
 attrList = filterby(attrList,'ambient','30');
 
@@ -22,7 +23,7 @@ for i=1:1
 
     
     ctr=ctr+1;
-    x = csvread(attrList(i).filename);
+    x = csvread(fullfile(attrList(i).path,attrList(i).filename));
 
 
     sig = x(:,2).';
@@ -33,7 +34,7 @@ for i=1:1
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.05);
-    figure();
+   % figure();
     
 
     split = 5;
@@ -132,7 +133,7 @@ RRRelErrorPerc = RRErrTot/ctr;
 
 
 
-function out = getAttr(name)
+function out = getAttr(name,path)
 
 res.name = '';
 res.ambient = '';
@@ -142,6 +143,7 @@ res.mask =  '';
 res.interrupted = '';
 res.orifice = '';
 res.filename = name;
+res.path = folder;
 
 res.countable = 'False';
 

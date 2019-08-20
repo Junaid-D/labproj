@@ -148,8 +148,14 @@ RRRelErrorPerc = RRErrTot/ctr;
 hold on;
 stem(mandets);
 stem(filedets,'LineStyle','-.','Marker','*');
-
-hold off;
+set(gca, 'FontName', 'Times')
+xlabel('Test Number') 
+ylabel('Detected Breaths') 
+legend('Manually Marked','')
+hold off; 
+folder = uigetdir();
+    
+f = fullfile(folder,attrList(i).filename);
 
 
 function out = getAttr(name)
