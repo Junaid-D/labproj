@@ -1,11 +1,11 @@
 clc;
 clear all;
 
-folder = 'AD820';
-cd(folder);
+%folder = '.';
+%cd(folder);
 list = dir('*.csv');
 subfolder = pwd();
-cd('..');
+%cd('..');
 thisFolder = pwd();
 
 ctr = 0;
@@ -18,10 +18,16 @@ tmp = struct2cell(list);
 names = tmp(1,:);
 attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
-attrList = filterby(attrList,'ambient','7',1);
+attrList = filterby(attrList,'ambient','35',0);
+attrList = filterby(attrList,'ambient','30',0);
+
+attrList = filterby(attrList,'mask','N',1);
+
 %attrList = filterby(attrList,'name','JAD',1);
 
-
+mandets = [];
+filedets = [];
+matdets = [];
 
 for i=1:length(attrList)
     attrs = attrList(i);
@@ -42,7 +48,7 @@ for i=1:length(attrList)
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.1);
-      figure();
+    %figure();
     
 
     split = 5;
@@ -119,16 +125,18 @@ for i=1:length(attrList)
   %  pk = manDetects(:,2).';
     pk  = interp1(tResamp,sigResamp,lk);% get values from interp
 
-    subplot(3,split,[2*split+1, 3*split]);
 
-    hold on;
-   plot(time,sig);
-   plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-   plot(detPoints/1000, valAtDetPoints, '>');
-   plot(tunedDets(:,1).',tunedDets(:,2).','^')
-   plot(lk,pk,'o')
- 
-    hold off;
+%     hold on;
+%    plot(time,sig);
+%    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+%    plot(detPoints/1000, valAtDetPoints, '>');
+%    plot(tunedDets(:,1).',tunedDets(:,2).','^')
+%    plot(lk,pk,'o')
+%  hold off
+    mandets(i) = length(pk);
+    filedets(i) = length(uniqueDetVals(:,2).');
+    
+   
     Errs2 = Errs2 + 100*abs(length(pk)-length(uniqueDetVals(:,2).'))/length(pk)
     Errs = Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
     RRErrTot = RRErrTot + RRErrs;
@@ -137,6 +145,11 @@ countRelErrorPerc = Errs/ctr
 countRelErrorPerc2 = Errs2/ctr
 RRRelErrorPerc = RRErrTot/ctr;
 
+hold on;
+stem(mandets);
+stem(filedets,'LineStyle','-.','Marker','*');
+
+hold off;
 
 
 function out = getAttr(name)
