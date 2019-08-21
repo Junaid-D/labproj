@@ -28,7 +28,8 @@ for i=1:length(attrList)
     
     ctr=ctr+1;
     x = csvread(fullfile(attrList(i).path,attrList(i).filename));
-    
+    x(any(isnan(x), 2), :) = [];
+
     sig = x(:,2).';
     time = x(:,end).'/1000;
     %reported
@@ -57,79 +58,49 @@ for i=1:length(attrList)
     manualFile = fullfile(path, attrList(i).filename);
     manDetects = csvread(manualFile);
     
-    x(any(isnan(x), 2), :) = [];
     sig = x(:,2).';
     time = x(:,end).'/1000;
-    hold on;
-    plot(time,sig);
     
-    plot(manDetects(:,1),manDetects(:,2),'xc','MarkerSize',20);
-    
-    plot(time(lk),pk,'>m','MarkerSize',10);
-    
-    plot(detPoints/1000,valAtDetPoints,'g<','MarkerSize',10);
-    
-    set(gca, 'FontName', 'Times');
-    xlabel('Time (s)');
-    ylabel('Voltage (V)');
-    legend('Breath Signal','Breath Detections (Reported)', 'Breath Detections (\textit{findpeaks})','Breath Detections (Manual)','Location','southwest');
-    hold off;
-    
-    savename = strcat(attrList(i).filename(1:end-4),'.pdf');
-    saveas(gcf,fullfile(outputFolder,savename));
+%     figure('Visible','off');
+% 
+%     
+%     hold on;
+%     plot(time,sig);
+%     
+%     plot(manDetects(:,1),manDetects(:,2),'xk','MarkerSize',20);
+%     
+%     plot(time(lk),pk,'>m','MarkerSize',10);
+%     
+%     plot(detPoints/1000,valAtDetPoints,'g<','MarkerSize',10);
+%     
+%     set(gca, 'FontName', 'Times');
+%     xlabel('Time (s)');
+%     ylabel('Voltage (V)');
+%     legend('Breath Signal','Breath Detections (Reported)', 'Breath Detections ({\it findpeaks})','Breath Detections (Manual)','Location','southwest');
+%     hold off;
+%     
+%     set(gca,'units','centimeters')
+%     pos = get(gca,'Position');
+%     ti = get(gca,'TightInset');
+% 
+%     fig = gcf;
+%     fig.PaperPositionMode = 'auto';
+%     fig_pos = fig.PaperPosition;
+%     fig.PaperSize = [fig_pos(3) fig_pos(4)];
 
+    savename = strcat(attrList(i).filename(1:end-4),'.pdf');
+ %   saveas(gcf,fullfile(outputFolder,savename));
+
+    
     l1 =  '\begin{figure}[H]'
     l2 = '\centering'
-    l3 = strcat(' \includegraphics[width = \columnwidth]{foldername/',savename,'}');
-    l4 = strcat('\caption{Test results for ',attrList(i).filename(1:end-4));
+    l3 = strcat(' \includegraphics[width = 0.7\columnwidth]{raws/',savename,'}');
+    l4 = strcat('\caption{Test results for',{' '},attrList(i).filename(1:end-4),'.}');
     l5 = strcat('\label{fig:t',num2str(ctr),'}');
     l6 = '\end{figure}';
     close
     
-    str = strcat(str , l1 , newline ,l2 ,newline ,l3 ,newline ,l4 ,newline ,l5 , newline ,l6 , newline);
+    str = strcat(str , l1 ,newline ,l2 ,newline ,l3 ,newline ,l4 ,newline ,l5 , newline ,l6 , newline);
     
 end
 
-
-
-
-function out = getAttr(name,folder)
-
-res.name = '';
-res.ambient = '';
-res.depth = '';
-res.rate = '';
-res.mask =  '';
-res.interrupted = '';
-res.orifice = '';
-res.filename = name;
-res.path = folder;
-
-res.countable = 'False';
-
-strs = strsplit(name(1:end-4),'-');
-
-res.name = strs(1);
-
-if length(strs)== 7
-    res.ambient = strs(2);
-    res.depth = strs(3);
-    res.rate = strs(4);
-    res.mask = strs(5);
-    res.interrupted = strs(6);
-    res.orifice = strs(7);
-    res.countable = 'True';
-
-end
-
-if length(strs)== 5
-    res.ambient = strs(2);
-    res.depth = strs(3);
-    res.rate = '';
-    res.mask = strs(4);
-    res.orifice = strs(5);
-    res.countable = 'True';
-end
-
-out = res;
-end

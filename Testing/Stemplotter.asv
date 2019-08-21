@@ -3,7 +3,7 @@ clear all;
 
 %folder = '.';
 %cd(folder);
-list = dir('**/*.csv');
+list = dir('*.csv');
 subfolder = pwd();
 %cd('..');
 thisFolder = pwd();
@@ -16,23 +16,12 @@ RRErrTot = 0 ;
 
 tmp = struct2cell(list);
 names = tmp(1,:);
-path = tmp(2,:);
-attrList = cellfun(@getAttr,names,path);
-
-
+attrList = cellfun(@getAttr,names);
 attrList = filterby(attrList,'countable','True',1);
- attrList = filterby(attrList,'ambient','35',0);
-% attrList = filterby(attrList,'ambient','6',0);
-% attrList = filterby(attrList,'ambient','7',0);
-% attrList = filterby(attrList,'ambient','30',0);
-% attrList = filterby(attrList,'ambient','29',0);
-attrList = filterby(attrList,'name','J',0);
-attrList = filterby(attrList,'name','M',0);
-attrList = filterby(attrList,'name','R1',0);
-attrList = filterby(attrList,'name','R2',0);
-attrList = filterby(attrList,'name','R3',0);
-attrList = filterby(attrList,'name','R4',0);
-attrList = filterby(attrList,'name','R5',0);
+attrList = filterby(attrList,'ambient','35',0);
+attrList = filterby(attrList,'ambient','30',0);
+
+attrList = filterby(attrList,'mask','N',1);
 
 %attrList = filterby(attrList,'name','JAD',1);
 
@@ -43,14 +32,14 @@ matdets = [];
 for i=1:length(attrList)
     attrs = attrList(i);
    
-      if(contains(attrList(i).path,'ManuallyMarked'))
-            continue;
-      end
+
 
     
     ctr=ctr+1;
-    x = csvread(fullfile(attrList(i).path,attrList(i).filename));
+    x = csvread(fullfile(subfolder,attrList(i).filename));
+
     x(any(isnan(x), 2), :) = [];
+
     sig = x(:,2).';
     time = x(:,end).'/1000;
     
@@ -153,30 +142,31 @@ RRRelErrorPerc = RRErrTot/ctr;
 
 hold on;
 
-stem(filedets,'LineStyle','--','Marker','x','Color','k','MarkerSize',20);
-stem(matdets,'LineStyle','--','Marker','>','Color','m','MarkerSize',10)
-stem(mandets,'LineStyle','--','Marker','<','Color','g','MarkerSize',10);
+stem(filedets,'LineStyle','-.','Marker','x','Color','k');
+stem(matdets,'LineStyle','--','Marker','>','Color','m')
+stem(mandets,'g<');
 
 set(gca, 'FontName', 'Times')
 xlabel('Test Number') 
 ylabel('Detected Breaths') 
-legend('Reported', '{\it findpeaks}','Manual');
+legend('Reported','')
 hold off; 
-
 outputFolder = uigetdir();
 
 
-fig = gcf;
-fig.PaperPositionMode = 'auto';
-fig_pos = fig.PaperPosition;
-fig.PaperSize = [fig_pos(3) fig_pos(4)];
+    fig = gcf;
+    fig.PaperPositionMode = 'auto';
+    fig_pos = fig.PaperPosition;
+    fig.PaperSize = [fig_pos(3) fig_pos(4)];
 
-savename = 'ad820.pdf';
-saveas(gcf,fullfile(outputFolder,savename));
-close all;
+   savename = strcat(attrList(i).filename(1:end-4),'.pdf');
+   saveas(gcf,fullfile(outputFolder,savename));
+
     
+%f = fullfile(folder,attrList(i).filename);
 
-function out = getAttr(name,folder)
+
+function out = getAttr(name)
 
 res.name = '';
 res.ambient = '';
@@ -186,7 +176,6 @@ res.mask =  '';
 res.interrupted = '';
 res.orifice = '';
 res.filename = name;
-res.path = folder;
 
 res.countable = 'False';
 

@@ -1,11 +1,8 @@
 clc;
 clear all;
 
-folder = 'AD820';
-cd(folder);
-list = dir('*.csv');
-subfolder = pwd();
-cd('..');
+
+list = dir('**/*.csv');
 thisFolder = pwd();
 
 ctr = 0;
@@ -16,21 +13,33 @@ RRErrTot = 0 ;
 
 tmp = struct2cell(list);
 names = tmp(1,:);
-attrList = cellfun(@getAttr,names);
+path = tmp(2,:);
+
+attrList = cellfun(@getAttr,names,path);
 attrList = filterby(attrList,'countable','True',1);
-attrList = filterby(attrList,'ambient','7',1);
+attrList = filterby(attrList,'ambient','35',0);
+attrList = filterby(attrList,'ambient','23',0);
+attrList = filterby(attrList,'ambient','24',0);
+attrList = filterby(attrList,'ambient','25',0);
+attrList = filterby(attrList,'ambient','30',0);
+attrList = filterby(attrList,'ambient','29',0);
+
+%attrList = filterby(attrList,'ambient','7',1);
 %attrList = filterby(attrList,'name','JAD',1);
 
 
 
 for i=1:length(attrList)
-    attrs = attrList(i);
-   
+    if(contains(attrList(i).path,'ManuallyMarked'))
+            continue;
+    end
+
+    
 
 
     
     ctr=ctr+1;
-    x = csvread(fullfile(subfolder,attrList(i).filename));
+    x = csvread(fullfile(attrList(i).path,attrList(i).filename));
 
     x(any(isnan(x), 2), :) = [];
 
@@ -42,7 +51,7 @@ for i=1:length(attrList)
     [tResamp,sigResamp] = interper(time,sig,40);
     
     tunedDets = gradDetector(tResamp,sigResamp,0.1);
-      figure();
+    %  figure();
     
 
     split = 5;
@@ -115,66 +124,33 @@ for i=1:length(attrList)
     manualFile = fullfile(path, attrList(i).filename);
     
     manDetects = csvread(manualFile);
+    
+    
+    
+    
     lk = manDetects(:,1).';
   %  pk = manDetects(:,2).';
     pk  = interp1(tResamp,sigResamp,lk);% get values from interp
 
-    subplot(3,split,[2*split+1, 3*split]);
-
-    hold on;
-   plot(time,sig);
-   plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
-   plot(detPoints/1000, valAtDetPoints, '>');
-   plot(tunedDets(:,1).',tunedDets(:,2).','^')
-   plot(lk,pk,'o')
- 
-    hold off;
+    
+    matdets = findpeaks(sig);
+%     subplot(3,split,[2*split+1, 3*split]);
+% 
+%     hold on;
+%    plot(time,sig);
+%    plot(uniqueDetVals(:,5).'/1000,uniqueDetVals(:,2).','*')
+%    plot(detPoints/1000, valAtDetPoints, '>');
+%    plot(tunedDets(:,1).',tunedDets(:,2).','^')
+%    plot(lk,pk,'o')
+%  
+%     hold off;
+    Errs = Errs + 100*abs(length(pk)-length(matdets))/length(pk)
     Errs2 = Errs2 + 100*abs(length(pk)-length(uniqueDetVals(:,2).'))/length(pk)
-    Errs = Errs + 100*abs(length(pk)-length(tunedDets(:,2).'))/length(pk)
+
     RRErrTot = RRErrTot + RRErrs;
 end
 countRelErrorPerc = Errs/ctr
 countRelErrorPerc2 = Errs2/ctr
-RRRelErrorPerc = RRErrTot/ctr;
 
+%RRRelErrorPerc = RRErrTot/ctr;
 
-
-function out = getAttr(name)
-
-res.name = '';
-res.ambient = '';
-res.depth = '';
-res.rate = '';
-res.mask =  '';
-res.interrupted = '';
-res.orifice = '';
-res.filename = name;
-
-res.countable = 'False';
-
-strs = strsplit(name(1:end-4),'-');
-
-res.name = strs(1);
-
-if length(strs)== 7
-    res.ambient = strs(2);
-    res.depth = strs(3);
-    res.rate = strs(4);
-    res.mask = strs(5);
-    res.interrupted = strs(6);
-    res.orifice = strs(7);
-    res.countable = 'True';
-
-end
-
-if length(strs)== 5
-    res.ambient = strs(2);
-    res.depth = strs(3);
-    res.rate = '';
-    res.mask = strs(4);
-    res.orifice = strs(5);
-    res.countable = 'True';
-end
-
-out = res;
-end
