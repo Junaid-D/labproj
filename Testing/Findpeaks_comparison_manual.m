@@ -18,11 +18,12 @@ path = tmp(2,:);
 attrList = cellfun(@getAttr,names,path);
 attrList = filterby(attrList,'countable','True',1);
 attrList = filterby(attrList,'ambient','35',0);
-attrList = filterby(attrList,'ambient','23',0);
-attrList = filterby(attrList,'ambient','24',0);
-attrList = filterby(attrList,'ambient','25',0);
-attrList = filterby(attrList,'ambient','30',0);
-attrList = filterby(attrList,'ambient','29',0);
+% attrList = filterby(attrList,'ambient','23',0);
+% attrList = filterby(attrList,'ambient','24',0);
+% attrList = filterby(attrList,'ambient','25',0);
+% attrList = filterby(attrList,'ambient','30',0);
+% attrList = filterby(attrList,'ambient','29',0);
+%attrList = filterby(attrList,'orifice','M',1);
 
 %attrList = filterby(attrList,'ambient','7',1);
 %attrList = filterby(attrList,'name','JAD',1);

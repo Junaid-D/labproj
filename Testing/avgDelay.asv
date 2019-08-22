@@ -1,0 +1,62 @@
+clc;
+clear all;
+
+
+list = dir('**/*.csv');
+thisFolder = pwd();
+
+ctr = 0;
+Errs = 0;
+Errs2 = 0;
+RRErrTot = 0 ;
+
+
+tmp = struct2cell(list);
+names = tmp(1,:);
+path = tmp(2,:);
+
+attrList = cellfun(@getAttr,names,path);
+attrList = filterby(attrList,'countable','True',1);
+attrList = filterby(attrList,'ambient','35',0);
+
+
+
+
+for i=1:length(attrList)
+    if(contains(attrList(i).path,'ManuallyMarked'))
+            continue;
+    end
+    
+       
+    ctr=ctr+1;
+    x = csvread(fullfile(attrList(i).path,attrList(i).filename));
+
+    x(any(isnan(x), 2), :) = [];
+
+    sig = x(:,2).';
+    time = x(:,end).'/1000;
+    
+    detsWStamps=x;
+
+    [~,idu] = unique(detsWStamps(:,3));
+    uniqueDetVals = detsWStamps(idu,:);
+    uniqueDetVals = uniqueDetVals(2:end,:);
+    
+    detPoints = uniqueDetVals(:,3).';
+   
+    
+    path = strcat(thisFolder,'\ManuallyMarked\');
+    manualFile = fullfile(path, attrList(i).filename);
+    
+    manDetects = csvread(manualFile);
+    
+    manDetTimes = manDetects(:,1).';
+    
+   
+    [matdets,matdetlocs] = findpeaks(sig);
+    
+    for j = 1: length(detPoints);
+
+    
+end
+
