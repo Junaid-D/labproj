@@ -28,6 +28,7 @@ attrList = filterby(attrList,'ambient','35',0);
 closenessThresh = 0.5 ; %sec
 avgDel = 0;
 dels = [];
+stddevs = [];
 for i=1:length(attrList)
     if(contains(attrList(i).path,'ManuallyMarked'))
             continue;
@@ -63,6 +64,7 @@ for i=1:length(attrList)
     
     percount  = 0;
     totDel = 0;
+    dels = [];
     for j = 1: length(detPoints)
         
         for k = 1: length(matdetlocs)
@@ -79,6 +81,7 @@ for i=1:length(attrList)
         dels(end+1) = totDel/percount;
     end
    if(percount > 0)
+       stddevs(end+1) = std(dels);
     avgDel  = avgDel + totDel/percount;
    end
 end

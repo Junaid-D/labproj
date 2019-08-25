@@ -170,16 +170,15 @@ void loop() {
 
     //int sensorValue = analogRead(A0);
 
-    float freq = 2*M_PI*0.1;
+    float freq = 2*M_PI*0.25;
 
-    if( currentMillis>20000)
-    freq = 2*M_PI*0.2;
     
-    //float sinPart = .1*sin (freq*t);
-    //float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
+    
+    float sinPart = .2*sin (freq*t);
+    float voltage = 3.2 +  max(sinPart,0);// comment for not using adc
 
-    int sensorValue = analogRead(A0);
-    float voltage = sensorValue * (5.0 / 1023.0);
+    //int sensorValue = analogRead(A0);
+    //float voltage = sensorValue * (5.0 / 1023.0);
 
     fillFilt(voltage*gradScaleFac);
     if (filterReady == 1)

@@ -1,0 +1,75 @@
+
+
+x = csvread('fftproof.csv');
+    x(any(isnan(x), 2), :) = [];
+
+
+    sig = x(:,2).';
+    time = x(:,end).'/1000;
+    
+    
+    
+    [tResamp,sigResamp] = interper(time,sig,40);
+    
+    ts = time(2)-time(1);
+    Fs = 1/ts;
+
+
+    
+    L = length(time);
+    Y = fft(sig);
+    f = Fs*(0:(L/2))/L;
+    P2 = abs(Y/L);
+    P1 = P2(1:L/2+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    
+    hold on;
+       plot(f(2:end)*60,P1(2:end)) ;
+       [val,index] = max(P1(2:end));
+        txt = strcat('Frequency = ',num2str(f(index+1)*60),'BPM');
+
+            text(f(index+1)*60 +1,val,txt) ;
+     plot(f(index+1)*60,val,'r^','markerfacecolor',[1 0 0])
+
+       hold off;
+    detsWStamps=x;
+ 
+    xlim([0 100])
+ 
+
+    [~,idu] = unique(detsWStamps(:,3));
+    uniqueDetVals = detsWStamps(idu,:);
+    uniqueDetVals = uniqueDetVals(2:end,:);
+    
+    detPoints = uniqueDetVals(:,3).';
+    if(length(detPoints)>1)
+        valAtDetPoints = interp1(uniqueDetVals(:,5).',uniqueDetVals(:,2).',detPoints);
+    elseif (length(detPoints)>0)
+        valAtDetPoints = uniqueDetVals(1,2);
+    else
+        valAtDetPoints = [];
+    end
+
+%    hold on;
+%   plot(time,sig);
+%   plot(detPoints/1000, uniqueDetVals(:,2).', 'g>'); 
+%    hold off;
+    
+   %legend('Breath Signal','Breath Detections (Reported)');
+    %plot(time,x(:,4).');
+    
+%     
+     xlabel('Frequency (BPM)');
+     ylabel('Magnitude (Single-Sided)');
+     
+     
+     fig = gcf;set(gca, 'FontName', 'Times');
+    
+fig.PaperPositionMode = 'auto';
+fig_pos = fig.PaperPosition;
+fig.PaperSize = [fig_pos(3) fig_pos(4)];
+outputFolder = uigetdir();
+
+file = 'ondev2.pdf';
+saveas(gcf,fullfile(outputFolder,file));
+close;
